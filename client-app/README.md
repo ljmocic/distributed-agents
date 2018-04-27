@@ -3,6 +3,7 @@
 ## Get started
 
 `npm install`
+
 `ng serve -o`
 
 ## Development server
