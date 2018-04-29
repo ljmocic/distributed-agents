@@ -14,5 +14,6 @@ Development:
 - ChatApp -> Run as -> Run on Server -> Wildfly 9.0.2
 
 Database:
- `cd 'C:\Program Files\MongoDB\Server\3.6\bin\'`
-`.\mongod.exe`
+ 
+- `cd 'C:\Program Files\MongoDB\Server\3.6\bin\'`
+- `.\mongod.exe`
