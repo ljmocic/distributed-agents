@@ -9,6 +9,10 @@ Development:
 - Clone repo
 - File -> import -> existing projects into workspace -> browse -> select "distributed-agents"
 - Make sure that projects 2 projects and 4 modules are selected(Check "Search for nested projects" is not checked) and finish
-- Make sure this folder is empty before deployment "C:\Users\ljmocic\wildfly-9.0.2.Final\standalone\deployments"
+- Make sure this folder is empty before deployment `C:\Users\ljmocic\wildfly-9.0.2.Final\standalone\deployments`
 - UserApp -> Run as -> Run on Server -> Wildfly 9.0.2 
-- ChatApp -> Run as -> Run on Server -> Wildfly 9.0.2 
+- ChatApp -> Run as -> Run on Server -> Wildfly 9.0.2
+
+Database:
+ `cd 'C:\Program Files\MongoDB\Server\3.6\bin\'`
+`.\mongod.exe`

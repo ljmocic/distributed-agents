@@ -3,14 +3,20 @@ package beans;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+
+@Entity
 public class User {
+	
+	@Id
+	private ObjectId id;
 
 	private String username;
 	private String password;
 	private String firstName;
 	private String lastName;
-	
-	private Host host;
 	
 	private List<String> friends;
 	
@@ -64,14 +70,6 @@ public class User {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public Host getHost() {
-		return host;
-	}
-
-	public void setHost(Host host) {
-		this.host = host;
 	}
 
 	public List<String> getFriends() {
