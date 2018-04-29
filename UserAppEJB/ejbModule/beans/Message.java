@@ -1,61 +1,67 @@
 package beans;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Reference;
+
+@Entity("messages")
 public class Message {
 
-	private int id;
-	
-	private String sender;
-	
-	private List<String> receivers;
-	
-	private Date date;
-	
+	@Id
+	private ObjectId id;
+	private LocalDateTime timestamp;
 	private String content;
 	
-	public Message() {}
+	@Reference
+	private User sender;
 
-	public Message(int id, String sender, List<String> receivers, Date date, String content) {
+	@Reference
+	private List<User> receivers;
+	
+	public Message(User sender, String content) {
 		super();
-		this.id = id;
+		this.id = new ObjectId();
 		this.sender = sender;
-		this.receivers = receivers;
-		this.date = date;
+		this.receivers = new ArrayList<User>();
+		this.timestamp = LocalDateTime.now();
 		this.content = content;
 	}
 
-	public int getId() {
+	public ObjectId getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(ObjectId id) {
 		this.id = id;
 	}
 
-	public String getSender() {
+	public User getSender() {
 		return sender;
 	}
 
-	public void setSender(String sender) {
+	public void setSender(User sender) {
 		this.sender = sender;
 	}
 
-	public List<String> getReceivers() {
+	public List<User> getReceivers() {
 		return receivers;
 	}
 
-	public void setReceivers(List<String> receivers) {
+	public void setReceivers(List<User> receivers) {
 		this.receivers = receivers;
 	}
 
-	public Date getDate() {
-		return date;
+	public LocalDateTime getTimestamp() {
+		return timestamp;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setTimestamp(LocalDateTime timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public String getContent() {

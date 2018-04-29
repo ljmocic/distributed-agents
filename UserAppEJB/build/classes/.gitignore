@@ -1,5 +1,3 @@
-/database/
-/repository/
-/services/
 /beans/
+/services/
 /interfaces/

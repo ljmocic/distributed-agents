@@ -6,36 +6,39 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Reference;
 
 @Entity("users")
 public class User {
 	
 	@Id
 	private ObjectId id;
-
+	
 	private String username;
 	private String password;
 	private String firstName;
 	private String lastName;
 	
-	private List<String> friends;
+	@Reference
+	private Host host;
+	
+	private List<User> friends;
 	
 	public User(String username, String password) {
-		super();
 		this.username = username;
 		this.password = password;
 		this.firstName = "";
 		this.lastName = "";
-		this.friends = new ArrayList<String>();
+		this.friends = new ArrayList<User>();
 	}
 
-	public User(String username, String password, String firstName, String lastName, List<String> friends) {
+	public User(String username, String password, String firstName, String lastName) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.friends = friends;
+		this.friends = new ArrayList<User>();
 	}
 	
 	public User() {}
@@ -80,13 +83,12 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public List<String> getFriends() {
+	public List<User> getFriends() {
 		return friends;
 	}
 
-	public void setFriends(List<String> friends) {
+	public void setFriends(List<User> friends) {
 		this.friends = friends;
 	}
-	
 	
 }

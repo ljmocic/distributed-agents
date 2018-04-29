@@ -1,29 +1,39 @@
 package beans;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Reference;
+
+@Entity("groups")
 public class Group {
 	
-	private int id;
-	
+	@Id
+	private ObjectId id;
 	private String name;
 	
-	private List<User> members;
-
-	public Group(int id, String name, List<User> members) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.members = members;
-	}
+	@Reference
+	private User admin;
 	
-	public Group() {}
+	@Reference
+	private List<User> members;
+	
+	public Group(String name, User admin) {
+		super();
+		this.id = new ObjectId();
+		this.name = name;
+		this.admin = admin;
+		this.members = new ArrayList<User>();
+	}
 
-	public int getId() {
+	public ObjectId getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(ObjectId id) {
 		this.id = id;
 	}
 
@@ -35,6 +45,14 @@ public class Group {
 		this.name = name;
 	}
 
+	public User getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(User admin) {
+		this.admin = admin;
+	}
+
 	public List<User> getMembers() {
 		return members;
 	}
@@ -42,7 +60,5 @@ public class Group {
 	public void setMembers(List<User> members) {
 		this.members = members;
 	}
-	
-	
 
 }

@@ -34,10 +34,11 @@ public class UserResource {
 	
 	@POST
 	@Path("/create")
-	@Produces(MediaType.APPLICATION_FORM_URLENCODED)
-	public void createUser(@FormParam("username") String username, @FormParam("password") String password) {
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User createUser(@FormParam("username") String username, @FormParam("password") String password) {
 		User user = new User(username, password);
-		userService.createUser(user);
+		return userService.createUser(user);
 	}
 	
 	@GET
@@ -59,6 +60,26 @@ public class UserResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void deleteUser(User user) {
 		userService.deleteUser(user);
+	}
+	
+	@GET
+	@Path("/friend/add/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void addFriend(@PathParam("username") String username) {
+		User loggedInUser = new User("test", "test");
+		User user = userService.getUserByUsername(username);
+		loggedInUser.getFriends().add(user);
+		userService.updateUser(loggedInUser);
+	}
+	
+	@GET
+	@Path("/friend/remove/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void removeFriend(@PathParam("password") String username) {
+		User loggedInUser = new User("test", "test");
+		User user = userService.getUserByUsername(username);
+		loggedInUser.getFriends().remove(user);
+		userService.updateUser(loggedInUser);
 	}
 
 }

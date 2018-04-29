@@ -1,17 +1,30 @@
 package beans;
 
-public class Host {
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 
-	private String address;
+@Entity("hosts")
+public class Host {
 	
+	@Id
+	private ObjectId id;
+	private String address;
 	private String alias;
 	
-	public Host() {}
-
-	public Host(String address, String alias) {
+	public Host(ObjectId id, String address, String alias) {
 		super();
+		this.id = id;
 		this.address = address;
 		this.alias = alias;
+	}
+
+	public ObjectId getId() {
+		return id;
+	}
+
+	public void setId(ObjectId id) {
+		this.id = id;
 	}
 
 	public String getAddress() {
@@ -29,7 +42,5 @@ public class Host {
 	public void setAlias(String alias) {
 		this.alias = alias;
 	}
-	
-	
-	
+
 }

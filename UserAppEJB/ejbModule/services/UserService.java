@@ -29,8 +29,9 @@ public class UserService implements UserServiceLocal {
 		return datastore.createQuery(User.class).asList();
 	}
 	
-	public void createUser(User user) {
+	public User createUser(User user) {
 		datastore.save(user);
+		return getUserByUsername(user.getUsername());
 	}
 	
 	public User getUserByUsername(String username) {
@@ -49,4 +50,12 @@ public class UserService implements UserServiceLocal {
 		datastore.delete(userToDelete);
 	}
 	
+	public void addFriend(User activeUser, User toAdd) {
+		// TODO
+	}
+	
+	public void removeFriend(User activeUser, User toUnfriend) {
+		// TODO
+	}
+
 }
