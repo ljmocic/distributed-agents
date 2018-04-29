@@ -93,4 +93,19 @@ public class User {
 		this.friends = friends;
 	}
 	
+	@Override
+	public boolean equals(Object u) {
+		if(u instanceof User) {
+			if(((User)u).getId().equals(id)) {
+				return true;
+			}
+			
+			if(((User)u).getUsername().equals(username)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 }

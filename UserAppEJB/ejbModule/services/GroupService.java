@@ -35,6 +35,10 @@ public class GroupService implements GroupServiceLocal {
 
 	@Override
 	public List<Group> getGroups() {
+		/*//ObjectId id = new ObjectId("5ae60b307ecb5a1d089880cf");
+		datastore.delete(datastore.createQuery(Group.class));
+		
+		//5ae60b307ecb5a1d089880cf*/
 		return datastore.createQuery(Group.class).asList();
 	}
 	

@@ -31,6 +31,11 @@ public class Message {
 		this.timestamp = LocalDateTime.now();
 		this.content = content;
 	}
+	
+	public Message() {
+		this.receivers = new ArrayList<User>();
+		this.timestamp = LocalDateTime.now();
+	}
 
 	public ObjectId getId() {
 		return id;

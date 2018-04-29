@@ -6,7 +6,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -33,40 +32,45 @@ public class MessageResource {
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Message> getAllUsers() {
+	public List<Message> getAllMessages() {
 		return messageService.getMessages();
 	}
 	
 	@POST
 	@Path("/create")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public void createUser(@FormParam("username") String username, @FormParam("password") String password, @FormParam("message") String message) {
-		User user = userService.createUser(new User(username, password));
-		Message userMessage = new Message(user, message);
-		messageService.createMessage(userMessage);
+	public void createMessage(Message message) {
+		messageService.createMessage(message);
 	}
 	
 	@GET
-	@Path("/{username}")
+	@Path("/user/{username}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Message> getMessage(@PathParam("username") String username) {
 		User user = userService.getUserByUsername(username);
 		return messageService.getMessagesFromUser(user);
 	}
+	
+	@GET
+	@Path("/group/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Message> getMessageForGroup(@PathParam("name") String name) {
+		return messageService.getMessagesFromGroup(name);
+	}
 
 	@PUT
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateUser(User user) {
-		userService.updateUser(user);
+	public void updateMessage(Message message) {
+		messageService.updateMessage(message);
 	}
 	
 	@DELETE
-	@Path("/delete")
+	@Path("/delete/{messageId}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void deleteUser(User user) {
-		//userService.deleteUser(user);
+	public void deleteMessage(Message message){
+		messageService.deleteMessage(message);
 	}
 
 }

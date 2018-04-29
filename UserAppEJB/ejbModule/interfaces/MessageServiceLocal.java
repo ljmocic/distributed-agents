@@ -13,7 +13,8 @@ public interface MessageServiceLocal {
 	List<Message> getMessages();
 	Message createMessage(Message Message);
 	List<Message> getMessagesFromUser(User user);
+	List<Message> getMessagesFromGroup(String group);
 	void updateMessage(Message message);
 	void deleteMessage(Message message);
-
+	
 }
