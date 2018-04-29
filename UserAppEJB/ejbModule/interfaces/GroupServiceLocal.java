@@ -1,16 +1,19 @@
 package interfaces;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import beans.Group;
-import beans.User;
 
 @Local
 public interface GroupServiceLocal {
 	
-	void createGroup(Group group);
-	void deleteGroup(Group group);
-	void addUserToGroup(User user);
-	void removeUserFromGroup(User user);
-
+	Group createGroup(Group group);
+	void updateGroup(Group group);
+	void deleteGroup(String name);
+	void addUserToGroup(String username, String name);
+	void removeUserFromGroup(String username, String name);
+	Group getGroupByName(String name);
+	List<Group> getGroups();
 }

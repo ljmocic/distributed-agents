@@ -1,5 +1,8 @@
 package services;
 
+import java.util.List;
+
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
@@ -21,6 +24,9 @@ public class GroupService implements GroupServiceLocal {
 
 	private Datastore datastore;
 
+	@EJB
+	private UserService userService;
+	
 	public GroupService() {
 		Morphia morphia = new Morphia();
 		datastore = morphia.createDatastore(new MongoClient(), "userappdb");
@@ -28,27 +34,64 @@ public class GroupService implements GroupServiceLocal {
 	}
 
 	@Override
-	public void createGroup(Group group) {
-		// TODO Auto-generated method stub
+	public List<Group> getGroups() {
+		return datastore.createQuery(Group.class).asList();
+	}
+	
+	@Override
+	public Group createGroup(Group group) {
+		datastore.save(group);
+		return getGroupByName(group.getName());
 		
 	}
 
 	@Override
-	public void deleteGroup(Group group) {
-		// TODO Auto-generated method stub
+	public void deleteGroup(String name) {
+		Group g = getGroupByName(name);
+		datastore.delete(g);
+	}
+	
+	@Override
+	public Group getGroupByName(String name) {
+		List<Group> result = datastore.createQuery(Group.class).
+				filter("name ==", name).asList();
 		
+		if(result.size() > 0)
+			return result.get(0);
+		else 
+			return null;
 	}
 
 	@Override
-	public void addUserToGroup(User user) {
-		// TODO Auto-generated method stub
-		
+	public void addUserToGroup(String username, String name) {
+		Group group = getGroupByName(name);
+		User user = userService.getUserByUsername(username);
+
+		group.getMembers().add(user);
+		createGroup(group);
 	}
 
 	@Override
-	public void removeUserFromGroup(User user) {
-		// TODO Auto-generated method stub
+	public void removeUserFromGroup(String username, String name) {
+		Group group = getGroupByName(name);
+		User user = userService.getUserByUsername(username);
 		
+		for(User uu: group.getMembers()) {
+			if(uu.getUsername().equals(user.getUsername())) {
+				group.getMembers().remove(uu);
+				break;
+			}
+		}
+		
+		createGroup(group);
 	}
 
+	@Override
+	public void updateGroup(Group group) {
+		Group gg = getGroupByName(group.getName());
+		gg.setAdmin(group.getAdmin());
+		gg.setMembers(group.getMembers());
+		
+		createGroup(gg);
+	}
 }

@@ -28,6 +28,10 @@ public class Group {
 		this.admin = admin;
 		this.members = new ArrayList<User>();
 	}
+	
+	public Group() {
+		this.members = new ArrayList<User>();
+	}
 
 	public ObjectId getId() {
 		return id;
