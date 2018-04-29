@@ -10,5 +10,9 @@ import beans.User;
 public interface UserServiceLocal {
 
 	List<User> getUsers();
+	void createUser(User user);
+	User getUserByUsername(String username);
+	void updateUser(User user);
+	void deleteUser(User user);
 
 }
