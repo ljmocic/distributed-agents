@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -13,6 +15,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.User;
@@ -30,6 +33,41 @@ public class UserResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<User> getAllUsers() {
 		return userService.getUsers();
+	}
+	
+	@POST
+	@Path("/login")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String loginUser(@Context HttpServletRequest request, @FormParam("username") String username, @FormParam("password") String password) {
+		HttpSession session = request.getSession();
+		
+		String response;
+		User user = userService.getUserByUsername(username);
+		if(user != null) {
+			if(user.getPassword().equals(password)) {
+				session.setAttribute("user", user);
+				response = "User successfully logged in!";
+			}
+			else {
+				session.setAttribute("user", null);
+				response = "User failed to log in!";
+			}
+		}
+		else {
+			session.setAttribute("user", null);
+			response = "User failed to log in!";
+		}
+		return response;
+	}
+	
+	@POST
+	@Path("/logout")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String logoutUser(@Context HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.invalidate();
+		return "User logged out!";
 	}
 	
 	@POST
