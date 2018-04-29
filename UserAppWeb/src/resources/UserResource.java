@@ -87,37 +87,35 @@ public class UserResource {
 	}
 
 	@PUT
-	@Path("/update")
+	@Path("/update/{username}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateUser(User user) {
+	public void updateUser(User user, @PathParam("username") String username) {
 		userService.updateUser(user);
 	}
 	
 	@DELETE
-	@Path("/delete")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void deleteUser(User user) {
-		userService.deleteUser(user);
+	@Path("/delete/{username}")
+	public void deleteUser(@PathParam("username") String username) {
+		userService.deleteUser(username);
+	}
+	
+	@PUT
+	@Path("/{username}/friends/{friend}")
+	public void addFriend(@PathParam("username") String username, @PathParam("friend") String friend) {
+		userService.addFriend(username, friend);
+	}
+	
+	@DELETE
+	@Path("/{username}/friends/{friend}")
+	public void removeFriend(@PathParam("username") String username, @PathParam("friend") String friend) {
+		userService.removeFriend(username, friend);
 	}
 	
 	@GET
-	@Path("/friend/add/{username}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void addFriend(@PathParam("username") String username) {
-		User loggedInUser = new User("test", "test");
-		User user = userService.getUserByUsername(username);
-		loggedInUser.getFriends().add(user);
-		userService.updateUser(loggedInUser);
-	}
-	
-	@GET
-	@Path("/friend/remove/{username}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void removeFriend(@PathParam("password") String username) {
-		User loggedInUser = new User("test", "test");
-		User user = userService.getUserByUsername(username);
-		loggedInUser.getFriends().remove(user);
-		userService.updateUser(loggedInUser);
+	@Path("/{username}/friends")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<User> getAllFriendsOf(@PathParam(value="username") String username){
+		return userService.getFriends(username);
 	}
 
 }

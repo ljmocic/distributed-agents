@@ -66,7 +66,7 @@ public class MessageResource {
 	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void deleteUser(User user) {
-		userService.deleteUser(user);
+		//userService.deleteUser(user);
 	}
 
 }

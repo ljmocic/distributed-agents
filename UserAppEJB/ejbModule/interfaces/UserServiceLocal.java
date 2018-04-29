@@ -13,6 +13,8 @@ public interface UserServiceLocal {
 	User createUser(User user);
 	User getUserByUsername(String username);
 	void updateUser(User user);
-	void deleteUser(User user);
-
+	void deleteUser(String username);
+    void removeFriend(String username, String friend);
+    void addFriend(String username, String friend);
+    List<User> getFriends(String username);
 }

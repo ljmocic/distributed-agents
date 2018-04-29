@@ -41,7 +41,9 @@ public class User {
 		this.friends = new ArrayList<User>();
 	}
 	
-	public User() {}
+	public User() {
+		this.friends = new ArrayList<User>();
+	}
 
 	public ObjectId getId() {
 		return id;
