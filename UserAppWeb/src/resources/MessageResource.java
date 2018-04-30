@@ -40,8 +40,8 @@ public class MessageResource {
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public void createMessage(Message message) {
-		messageService.createMessage(message);
+	public Message createMessage(Message message) {
+		return messageService.createMessage(message);
 	}
 	
 	@GET

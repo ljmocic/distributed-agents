@@ -2,49 +2,49 @@ package resources;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Path;
 
 import interfaces.MessageResourceInterface;
+import services.MessageServiceProxy;
 
 @Path("/message")
 @Stateless
 public class MessageResourceProxy implements MessageResourceInterface {
 
+	@EJB
+	MessageServiceProxy messageServiceProxy;
+	
 	@Override
 	public List<Object> getAllMessages() {
-		// TODO Auto-generated method stub
-		return null;
+		return messageServiceProxy.getRest().getAllMessages();
 	}
 
 	@Override
-	public void createMessage(Object message) {
-		// TODO Auto-generated method stub
-		
+	public Object createMessage(Object message) {
+		return messageServiceProxy.getRest().createMessage(message);
 	}
 
 	@Override
 	public List<Object> getMessage(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return messageServiceProxy.getRest().getMessage(username);
 	}
 
 	@Override
 	public List<Object> getMessageForGroup(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return messageServiceProxy.getRest().getMessageForGroup(name);
 	}
 
 	@Override
 	public void updateMessage(Object message) {
-		// TODO Auto-generated method stub
+		messageServiceProxy.getRest().updateMessage(message);
 		
 	}
 
 	@Override
 	public void deleteMessage(Object message) {
-		// TODO Auto-generated method stub
-		
+		messageServiceProxy.getRest().deleteMessage(message);
 	}
 
 }

@@ -25,7 +25,7 @@ public interface MessageResourceInterface {
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public void createMessage(Message message);
+	public Object createMessage(Message message);
 	
 	@GET
 	@Path("/user/{username}")
