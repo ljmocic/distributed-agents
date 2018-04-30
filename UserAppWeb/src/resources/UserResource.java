@@ -19,11 +19,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.User;
+import interfaces.UserResourceInterface;
 import interfaces.UserServiceLocal;
 
 @Path("/user")
 @Stateless
-public class UserResource {
+public class UserResource implements UserResourceInterface {
 	
 	@EJB
 	UserServiceLocal userService;

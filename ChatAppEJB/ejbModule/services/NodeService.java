@@ -11,6 +11,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import interfaces.NodeServiceLocal;
+
 @Singleton
 @LocalBean
 @Startup

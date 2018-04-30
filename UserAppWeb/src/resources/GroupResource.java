@@ -18,7 +18,7 @@ import beans.Group;
 import interfaces.GroupServiceLocal;
 
 @Stateless
-@Path("/groups")
+@Path("/group")
 public class GroupResource {
 
 	@EJB

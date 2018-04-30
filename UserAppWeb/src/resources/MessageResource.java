@@ -69,7 +69,7 @@ public class MessageResource {
 	@DELETE
 	@Path("/delete/{messageId}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void deleteMessage(Message message){
+	public void deleteMessage(Message message) {
 		messageService.deleteMessage(message);
 	}
 
