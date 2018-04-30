@@ -41,44 +41,38 @@ public class UserResourceProxy implements UserResourceInterface {
 
 	@Override
 	public Object createUser(String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
+		return userService.getRest().createUser(username, password);
 	}
 
 	@Override
 	public Object getUser(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return userService.getRest().getUser(username);
 	}
 
 	@Override
 	public void updateUser(Object user, String username) {
-		// TODO Auto-generated method stub
+		userService.getRest().updateUser(user, username);
 		
 	}
 
 	@Override
 	public void deleteUser(String username) {
-		// TODO Auto-generated method stub
-		
+		userService.getRest().deleteUser(username);
 	}
 
 	@Override
 	public void addFriend(String username, String friend) {
-		// TODO Auto-generated method stub
-		
+		userService.getRest().addFriend(username, friend);
 	}
 
 	@Override
 	public void removeFriend(String username, String friend) {
-		// TODO Auto-generated method stub
-		
+		userService.getRest().removeFriend(username, friend);
 	}
 
 	@Override
 	public List<Object> getAllFriendsOf(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return userService.getRest().getAllFriendsOf(username);
 	}
 
 }
