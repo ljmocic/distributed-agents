@@ -35,10 +35,6 @@ public class GroupService implements GroupServiceLocal {
 
 	@Override
 	public List<Group> getGroups() {
-		/*//ObjectId id = new ObjectId("5ae60b307ecb5a1d089880cf");
-		datastore.delete(datastore.createQuery(Group.class));
-		
-		//5ae60b307ecb5a1d089880cf*/
 		return datastore.createQuery(Group.class).asList();
 	}
 	
@@ -52,6 +48,7 @@ public class GroupService implements GroupServiceLocal {
 	@Override
 	public void deleteGroup(String name) {
 		Group g = getGroupByName(name);
+		System.out.println(g);
 		datastore.delete(g);
 	}
 	
@@ -93,7 +90,11 @@ public class GroupService implements GroupServiceLocal {
 	@Override
 	public void updateGroup(Group group) {
 		Group gg = getGroupByName(group.getName());
-		gg.setAdmin(group.getAdmin());
+		if(group.getAdmin()!=null) {
+			gg.setAdmin(userService.getUserByUsername(group.getAdmin().getUsername()));
+		}else {
+			gg.setAdmin(null);
+		}
 		gg.setMembers(group.getMembers());
 		
 		createGroup(gg);
