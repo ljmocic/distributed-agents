@@ -10,7 +10,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import beans.User;
 import interfaces.UserResourceInterface;
+import services.AuthorizationService;
 import services.UserServiceProxy;
 
 @Path("/user")
@@ -20,6 +22,9 @@ public class UserResourceProxy implements UserResourceInterface {
 	@EJB
 	UserServiceProxy userService;
 
+	@EJB
+	AuthorizationService authorizationService;
+	
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -29,14 +34,20 @@ public class UserResourceProxy implements UserResourceInterface {
 
 	@Override
 	public String loginUser(HttpServletRequest request, String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
+		String response = userService.getRest().loginUser(request, username, password);
+		User u = (User) request.getSession().getAttribute("user");
+		if(u!=null) {
+			u.setHost(authorizationService.createHost(request));
+			request.getSession().setAttribute("user", u);
+			authorizationService.addActiveUser(u);
+		}
+		
+		return response;
 	}
 
 	@Override
 	public String logoutUser(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		return userService.getRest().logoutUser(request);
 	}
 
 	@Override

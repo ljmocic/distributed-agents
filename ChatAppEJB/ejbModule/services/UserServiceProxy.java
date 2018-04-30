@@ -14,7 +14,7 @@ import interfaces.UserResourceInterface;
 public class UserServiceProxy {
 
 	UserResourceInterface rest;
-
+	
     public UserServiceProxy() {
     	ResteasyClient client = new ResteasyClientBuilder().build();
 		ResteasyWebTarget target = client.target("http://localhost:8080/UserAppWeb/rest/user");

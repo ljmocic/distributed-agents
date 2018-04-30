@@ -106,7 +106,7 @@ public class User {
 		
 		return false;
 	}
-
+	
 	public Host getHost() {
 		return host;
 	}
@@ -114,5 +114,4 @@ public class User {
 	public void setHost(Host host) {
 		this.host = host;
 	}
-	
 }
