@@ -2,76 +2,56 @@ package resources;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Path;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import interfaces.GroupResourceInterface;
+import services.GroupServiceProxy;
 
 @Path("/group")
 @Stateless
 public class GroupResourceProxy implements GroupResourceInterface {
 
-	private ResteasyClient client;
+	@EJB
+	GroupServiceProxy groupServiceProxy;
 	
 	public GroupResourceProxy() {
-		client = new ResteasyClientBuilder().build();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object> getGroups() {
-		ResteasyWebTarget target = client.target("http://localhost:8080/UserAppWeb/rest/group");
-		Response r = target.request(MediaType.APPLICATION_JSON).get();
-		return r.readEntity(List.class);
+		return groupServiceProxy.getRest().getGroups();
 	}
 
 	@Override
 	public Object findGroup(String name) {
-		ResteasyWebTarget target = client.target("http://localhost:8080/UserAppWeb/rest/group/"+name);
-		Response r = target.request(MediaType.APPLICATION_JSON).get();
-		return r.readEntity(Object.class);
+		return groupServiceProxy.getRest().findGroup(name);
 	}
 
 	@Override
 	public Object createGroup(Object g) {
-		ResteasyWebTarget target = client.target("http://localhost:8080/UserAppWeb/rest/group");
-		Response r = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(g, MediaType.APPLICATION_JSON));
-		return r.readEntity(Object.class);
+		return groupServiceProxy.getRest().createGroup(g);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void updateGroup(Object g, String name) {
-		ResteasyWebTarget target = client.target("http://localhost:8080/UserAppWeb/rest/group/"+name);
-		Response r = target.request(MediaType.APPLICATION_JSON).put(Entity.entity(g, MediaType.APPLICATION_JSON));	
+		groupServiceProxy.getRest().updateGroup(g, name);	
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void deleteGroup(String name) {
-		ResteasyWebTarget target = client.target("http://localhost:8080/UserAppWeb/rest/group/"+name);
-		Response r = target.request().delete();	
+		groupServiceProxy.getRest().deleteGroup(name);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void addToGroup(String name, String username) {
-		ResteasyWebTarget target = client.target("http://localhost:8080/UserAppWeb/rest/group/"+name+"/users/"+username);
-		Response r = target.request().put(null);		
+		groupServiceProxy.getRest().addToGroup(name, username);		
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void removeFromGroup(String name, String username) {
-		ResteasyWebTarget target = client.target("http://localhost:8080/UserAppWeb/rest/group/"+name+"/users/"+username);
-		Response r = target.request().delete();
+		groupServiceProxy.getRest().removeFromGroup(name, username);
 	}
 
 }
