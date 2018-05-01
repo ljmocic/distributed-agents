@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -14,7 +13,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.User;
@@ -37,8 +35,7 @@ public class UserResource implements UserResourceInterface {
 	
 	@POST
 	@Path("/login")
-	public String loginUser(@Context HttpServletRequest request, @FormParam("username") String username, @FormParam("password") String password) {
-
+	public String loginUser(@FormParam("username") String username, @FormParam("password") String password) {
 		User user = userService.getUserByUsername(username);
 		if(user != null) {
 			if(user.getPassword().equals(password)) {
@@ -51,8 +48,9 @@ public class UserResource implements UserResourceInterface {
 	}
 	
 	@POST
-	@Path("/logout")
-	public String logoutUser(HttpServletRequest request) {
+	@Path("/logout/{username}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String logoutUser(@PathParam("username") String username) {
 		return "User logged out!";
 	}
 	

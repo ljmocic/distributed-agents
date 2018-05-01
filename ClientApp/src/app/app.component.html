@@ -3,6 +3,11 @@
   <h1>
     Welcome to {{ title }}!
   </h1>
+  <input [(ngModel)]="username"/>
+  <input [(ngModel)]="password"/>
+  <button (click)="login()">Login</button>
+  <button (click)="logout()">Logout</button>
+  <br/>
   <input [(ngModel)]="messageContent"/>
   <button (click)="sendMessage()">Send</button>
   <p *ngFor="let message of messages">{{message}}</p>

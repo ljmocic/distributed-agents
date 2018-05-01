@@ -8,6 +8,8 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'app';
   messageContent = '';
+  username = '';
+  password = '';
   websocket: any;
   messages;
 
@@ -34,7 +36,35 @@ export class AppComponent {
   }
 
   sendMessage() {
-    this.websocket.send(this.messageContent);
+    let command = {
+      'type': 'MESSAGE',
+      'message': this.messageContent,
+      'username': this.username
+    };
+
+    this.websocket.send(JSON.stringify(command));
+    this.messageContent = '';
+  }
+
+  login() {
+    let command = {
+      'type': 'LOGIN',
+      'username': this.username,
+      'password': this.password,
+    };
+
+    this.websocket.send(JSON.stringify(command));
+    this.messageContent = '';
+  }
+
+  logout() {
+    let command = {
+      'type': 'LOGOUT',
+      'username': this.username,
+      'password': this.password,
+    };
+
+    this.websocket.send(JSON.stringify(command));
     this.messageContent = '';
   }
 }

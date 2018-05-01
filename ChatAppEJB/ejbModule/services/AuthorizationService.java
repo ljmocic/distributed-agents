@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.servlet.ServletRequest;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
@@ -26,24 +25,26 @@ public class AuthorizationService {
 		activeUsers = new ArrayList<>();
 	}
 	
-	public void addActiveUser(User u) {
-		if(!activeUsers.contains(u)) {
-			activeUsers.add(u);
+	public void addActiveUser(User user) {
+		activeUsers.add(user);
+		synchronizationService.getTarget().request().post(Entity.entity(activeUsers, MediaType.APPLICATION_JSON));
+	}
+	
+	public void removeActiveUser(String username) {
+		for (User user : activeUsers) {
+			if(user.getUsername().equals(username));
 		}
 		synchronizationService.getTarget().request().post(Entity.entity(activeUsers, MediaType.APPLICATION_JSON));
 	}
 	
-	public void removeActiveUser(User u) {
-		if(u!=null) {
-			if(activeUsers.contains(u)) {
-				activeUsers.remove(u);
-			}
+	public Host createHost() {
+		String address = "";
+		try {
+			address = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		synchronizationService.getTarget().request().post(Entity.entity(activeUsers, MediaType.APPLICATION_JSON));
-	}
-	
-	public Host createHost(ServletRequest request) {
-		String address = request.getRemoteAddr() + request.getRemotePort();
 		String alias = "";
 		try {
 			alias = InetAddress.getLocalHost().getHostName();

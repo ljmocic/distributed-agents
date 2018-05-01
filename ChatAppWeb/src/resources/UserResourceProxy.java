@@ -4,11 +4,10 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.User;
@@ -34,8 +33,8 @@ public class UserResourceProxy implements UserResourceInterface {
 	}
 
 	@Override
-	public String loginUser(@Context HttpServletRequest request, String username, String password) {
-		String response = userService.getRest().loginUser(request, username, password);
+	public String loginUser(String username, String password) {
+		String response = userService.getRest().loginUser(username, password);
 		if(response.equals("User succesfully logged in")) {
 			User u = null;
 			try {
@@ -46,8 +45,7 @@ public class UserResourceProxy implements UserResourceInterface {
 				u.setUsername(username);
 				u.setPassword(password);
 			}
-			u.setHost(authorizationService.createHost(request));
-			request.getSession().setAttribute("user", u);
+			u.setHost(authorizationService.createHost());
 			authorizationService.addActiveUser(u);
 		}
 		
@@ -55,10 +53,9 @@ public class UserResourceProxy implements UserResourceInterface {
 	}
 
 	@Override
-	public String logoutUser(@Context HttpServletRequest request) {
-		authorizationService.removeActiveUser((User)request.getSession().getAttribute("user"));
-		request.getSession().invalidate();
-		return userService.getRest().logoutUser(request);
+	public String logoutUser(@PathParam("username") String username) {
+		authorizationService.removeActiveUser(username);
+		return userService.getRest().logoutUser(username);
 	}
 
 	@Override
