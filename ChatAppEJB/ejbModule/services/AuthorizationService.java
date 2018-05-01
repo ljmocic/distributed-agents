@@ -5,8 +5,11 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.servlet.ServletRequest;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 
 import beans.Host;
 import beans.User;
@@ -16,6 +19,9 @@ public class AuthorizationService {
 
 	private List<User> activeUsers;
 	
+	@EJB
+	SynchronizationService synchronizationService;
+	
 	public AuthorizationService() {
 		activeUsers = new ArrayList<>();
 	}
@@ -24,12 +30,16 @@ public class AuthorizationService {
 		if(!activeUsers.contains(u)) {
 			activeUsers.add(u);
 		}
+		synchronizationService.getTarget().request().post(Entity.entity(activeUsers, MediaType.APPLICATION_JSON));
 	}
 	
 	public void removeActiveUser(User u) {
-		if(activeUsers.contains(u)) {
-			activeUsers.remove(u);
+		if(u!=null) {
+			if(activeUsers.contains(u)) {
+				activeUsers.remove(u);
+			}
 		}
+		synchronizationService.getTarget().request().post(Entity.entity(activeUsers, MediaType.APPLICATION_JSON));
 	}
 	
 	public Host createHost(ServletRequest request) {

@@ -79,10 +79,8 @@ public class UserService implements UserServiceLocal {
 		
 		System.out.println(u.getFriends());
 		u.getFriends().add(uToAdd);
-		//uToAdd.getFriends().add(u);
 		
 		createUser(u);
-		//createUser(uToAdd);
 	}
 	
 	@Override
@@ -97,14 +95,7 @@ public class UserService implements UserServiceLocal {
 			}
 		}
 		
-		/*for(User uu: uToUnfriend.getFriends()) {
-			if(uu.getUsername().equals(u.getUsername())) {
-				uToUnfriend.getFriends().remove(uu);
-			}
-		}*/
-		
 		createUser(u);
-		//createUser(uToUnfriend);
 	}
 	
 	@Override
@@ -114,17 +105,10 @@ public class UserService implements UserServiceLocal {
 		
 		List<User> friends = u.getFriends();
 		
-		//trazimo prijatelje jednog coveka
-		//koje cine njegovi prijatelji
-		//i ljudi kojima je on prijatelj
-		
 		for(User uu: allUsers) {
 			if(!uu.getUsername().equals(username)){
-				//korisnik koji nije u
-				//prodjemo kroz uu prijatelje
 				for(User fr: uu.getFriends()) {
 					if(fr.getUsername().equals(username)) {
-						//korisnik koji nije u ima u sebi prijatelja koji je u
 						friends.add(uu);
 						break;
 					}

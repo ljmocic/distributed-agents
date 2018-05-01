@@ -5,6 +5,8 @@ public class Host {
 	private String address;
 	private String alias;
 	
+	public Host() {}
+	
 	public Host(String address, String alias) {
 		super();
 		this.address = address;

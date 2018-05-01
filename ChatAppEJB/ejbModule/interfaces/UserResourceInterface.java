@@ -15,12 +15,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import beans.User;
+
 public interface UserResourceInterface {
 
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Object> getAllUsers();
+	public List<User> getAllUsers();
 	
 	@POST
 	@Path("/login")
@@ -37,17 +39,17 @@ public interface UserResourceInterface {
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Object createUser(@FormParam("username") String username, @FormParam("password") String password);
+	public User createUser(@FormParam("username") String username, @FormParam("password") String password);
 	
 	@GET
 	@Path("/{username}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Object getUser(@PathParam("username") String username);
+	public User getUser(@PathParam("username") String username);
 
 	@PUT
 	@Path("/update/{username}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateUser(Object user, @PathParam("username") String username);
+	public void updateUser(User user, @PathParam("username") String username);
 	
 	@DELETE
 	@Path("/delete/{username}")
@@ -64,6 +66,6 @@ public interface UserResourceInterface {
 	@GET
 	@Path("/{username}/friends")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Object> getAllFriendsOf(@PathParam("username") String username);
+	public List<User> getAllFriendsOf(@PathParam("username") String username);
 	
 }

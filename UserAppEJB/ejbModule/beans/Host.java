@@ -11,6 +11,8 @@ public class Host {
 		this.alias = alias;
 	}
 
+	public Host() {}
+	
 	public String getAddress() {
 		return address;
 	}

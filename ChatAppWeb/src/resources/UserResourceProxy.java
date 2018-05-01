@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.User;
@@ -28,15 +29,23 @@ public class UserResourceProxy implements UserResourceInterface {
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Object> getAllUsers() {
+	public List<User> getAllUsers() {
 		return userService.getRest().getAllUsers();
 	}
 
 	@Override
-	public String loginUser(HttpServletRequest request, String username, String password) {
+	public String loginUser(@Context HttpServletRequest request, String username, String password) {
 		String response = userService.getRest().loginUser(request, username, password);
-		User u = (User) request.getSession().getAttribute("user");
-		if(u!=null) {
+		if(response.equals("User succesfully logged in")) {
+			User u = null;
+			try {
+				u = userService.getRest().getUser(username);
+			}catch(Exception e) {
+				u = new User();
+				u.setId(null);
+				u.setUsername(username);
+				u.setPassword(password);
+			}
 			u.setHost(authorizationService.createHost(request));
 			request.getSession().setAttribute("user", u);
 			authorizationService.addActiveUser(u);
@@ -46,22 +55,24 @@ public class UserResourceProxy implements UserResourceInterface {
 	}
 
 	@Override
-	public String logoutUser(HttpServletRequest request) {
+	public String logoutUser(@Context HttpServletRequest request) {
+		authorizationService.removeActiveUser((User)request.getSession().getAttribute("user"));
+		request.getSession().invalidate();
 		return userService.getRest().logoutUser(request);
 	}
 
 	@Override
-	public Object createUser(String username, String password) {
+	public User createUser(String username, String password) {
 		return userService.getRest().createUser(username, password);
 	}
 
 	@Override
-	public Object getUser(String username) {
+	public User getUser(String username) {
 		return userService.getRest().getUser(username);
 	}
 
 	@Override
-	public void updateUser(Object user, String username) {
+	public void updateUser(User user, String username) {
 		userService.getRest().updateUser(user, username);
 		
 	}
@@ -82,7 +93,7 @@ public class UserResourceProxy implements UserResourceInterface {
 	}
 
 	@Override
-	public List<Object> getAllFriendsOf(String username) {
+	public List<User> getAllFriendsOf(String username) {
 		return userService.getRest().getAllFriendsOf(username);
 	}
 
