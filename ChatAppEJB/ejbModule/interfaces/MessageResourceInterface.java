@@ -12,6 +12,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import beans.Message;
+
 public interface MessageResourceInterface {
 
 	@GET
@@ -23,17 +25,17 @@ public interface MessageResourceInterface {
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Object createMessage(Object message);
+	public Message createMessage(Message message);
 	
 	@GET
 	@Path("/user/{username}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Object> getMessage(@PathParam("username") String username);
+	public List<Message> getMessage(@PathParam("username") String username);
 	
 	@GET
 	@Path("/group/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Object> getMessageForGroup(@PathParam("name") String name);
+	public List<Message> getMessageForGroup(@PathParam("name") String name);
 
 	@PUT
 	@Path("/update")

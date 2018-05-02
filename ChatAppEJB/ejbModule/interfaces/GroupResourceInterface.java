@@ -12,26 +12,28 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import beans.Group;
+
 public interface GroupResourceInterface {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Object> getGroups();
+	public List<Group> getGroups();
 	
 	@GET
 	@Path("/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Object findGroup(@PathParam(value="name") String name);
+	public Group findGroup(@PathParam(value="name") String name);
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Object createGroup(Object g);
+	public Group createGroup(Group g);
 	
 	@PUT
 	@Path("/{name}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateGroup(Object g, @PathParam(value="name") String name);
+	public void updateGroup(Group g, @PathParam(value="name") String name);
 	
 	@DELETE
 	@Path("/{name}")

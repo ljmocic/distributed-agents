@@ -6,6 +6,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Path;
 
+import beans.Group;
 import interfaces.GroupResourceInterface;
 import services.GroupServiceProxy;
 
@@ -20,22 +21,22 @@ public class GroupResourceProxy implements GroupResourceInterface {
 	}
 	
 	@Override
-	public List<Object> getGroups() {
+	public List<Group> getGroups() {
 		return groupServiceProxy.getRest().getGroups();
 	}
 
 	@Override
-	public Object findGroup(String name) {
+	public Group findGroup(String name) {
 		return groupServiceProxy.getRest().findGroup(name);
 	}
 
 	@Override
-	public Object createGroup(Object g) {
+	public Group createGroup(Group g) {
 		return groupServiceProxy.getRest().createGroup(g);
 	}
 
 	@Override
-	public void updateGroup(Object g, String name) {
+	public void updateGroup(Group g, String name) {
 		groupServiceProxy.getRest().updateGroup(g, name);	
 	}
 

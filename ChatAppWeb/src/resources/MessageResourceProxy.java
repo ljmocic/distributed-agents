@@ -6,6 +6,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Path;
 
+import beans.Message;
 import interfaces.MessageResourceInterface;
 import services.MessageServiceProxy;
 
@@ -22,17 +23,17 @@ public class MessageResourceProxy implements MessageResourceInterface {
 	}
 
 	@Override
-	public Object createMessage(Object message) {
+	public Message createMessage(Message message) {
 		return messageServiceProxy.getRest().createMessage(message);
 	}
 
 	@Override
-	public List<Object> getMessage(String username) {
+	public List<Message> getMessage(String username) {
 		return messageServiceProxy.getRest().getMessage(username);
 	}
 
 	@Override
-	public List<Object> getMessageForGroup(String name) {
+	public List<Message> getMessageForGroup(String name) {
 		return messageServiceProxy.getRest().getMessageForGroup(name);
 	}
 

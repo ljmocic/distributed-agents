@@ -10,5 +10,16 @@
   <br/>
   <input [(ngModel)]="messageContent"/>
   <button (click)="sendMessage()">Send</button>
+  <br/>
+  <button (click)="createGroup()">Create group</button>
+  <button (click)="addMemberGroup()">Add member update group</button>
+  <button (click)="addFriend()">Add friend</button>
+  <button (click)="removeFriend()">Remove friend</button>
+  <button (click)="sendMessageToUser()">Send message to user</button>
+  <button (click)="sendMessageToGroup()">Send message to group</button>
+  <button (click)="getFriends()">Get user friends</button>
+  <button (click)="getGroups()">Get user groups</button>
+  <button (click)="getMessages()">Get user messages</button>
+  <button (click)="getMessagesFromGroup()">Get group messages</button>
   <p *ngFor="let message of messages">{{message}}</p>
 </div>

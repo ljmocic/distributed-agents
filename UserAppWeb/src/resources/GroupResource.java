@@ -1,5 +1,6 @@
 package resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -15,7 +16,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import beans.Group;
+import beans.User;
 import interfaces.GroupServiceLocal;
+import interfaces.UserServiceLocal;
 
 @Stateless
 @Path("/group")
@@ -23,6 +26,8 @@ public class GroupResource {
 
 	@EJB
 	GroupServiceLocal groupService;
+	
+	@EJB UserServiceLocal userService;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -34,13 +39,26 @@ public class GroupResource {
 	@Path("/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Group findGroup(@PathParam(value="name") String name) {
-		return groupService.getGroupByName(name);
+		Group temp = groupService.getGroupByName(name);
+		for(User user:temp.getMembers()) {
+			user.setId(null);
+		}
+		temp.setId(null);
+		return temp;
 	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Group createGroup(Group g) {
+		User user = userService.getUserByUsername(g.getAdmin().getUsername());
+		g.setAdmin(user);
+		List<User> tempMembers = new ArrayList<User>();
+		for (User groupMember : g.getMembers()) {
+			System.out.println(groupMember.getUsername());
+			tempMembers.add(userService.getUserByUsername(groupMember.getUsername()));
+		}
+		g.setMembers(tempMembers);
 		return groupService.createGroup(g);
 	}
 	
@@ -48,6 +66,12 @@ public class GroupResource {
 	@Path("/{name}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void updateGroup(Group g, @PathParam(value="name") String name) {
+		List<User> tempMembers = new ArrayList<User>();
+		for (User groupMember : g.getMembers()) {
+			System.out.println(groupMember.getUsername());
+			tempMembers.add(userService.getUserByUsername(groupMember.getUsername()));
+		}
+		g.setMembers(tempMembers);
 		groupService.updateGroup(g);
 	}
 	

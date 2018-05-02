@@ -8,10 +8,13 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity("groups")
 public class Group {
 	
 	@Id
+	@JsonIgnore
 	private ObjectId id;
 	private String name;
 	

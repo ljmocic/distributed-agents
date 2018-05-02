@@ -9,12 +9,15 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity("messages")
 public class Message {
 
 	@Id
+	@JsonIgnore
 	private ObjectId id;
-	private LocalDateTime timestamp;
+	private String timestamp;
 	private String content;
 	
 	@Reference
@@ -23,18 +26,18 @@ public class Message {
 	@Reference
 	private List<User> receivers;
 	
+	public Message() {
+		this.receivers = new ArrayList<User>();
+		this.timestamp = LocalDateTime.now().toString();
+	}
+	
 	public Message(User sender, String content) {
 		super();
 		this.id = new ObjectId();
 		this.sender = sender;
 		this.receivers = new ArrayList<User>();
-		this.timestamp = LocalDateTime.now();
+		this.timestamp = LocalDateTime.now().toString();
 		this.content = content;
-	}
-	
-	public Message() {
-		this.receivers = new ArrayList<User>();
-		this.timestamp = LocalDateTime.now();
 	}
 
 	public ObjectId getId() {
@@ -61,11 +64,11 @@ public class Message {
 		this.receivers = receivers;
 	}
 
-	public LocalDateTime getTimestamp() {
+	public String getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(LocalDateTime timestamp) {
+	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
 
