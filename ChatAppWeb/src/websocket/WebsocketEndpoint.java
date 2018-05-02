@@ -68,12 +68,12 @@ public class WebsocketEndpoint {
 		}
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@OnMessage
 	public void echoTextMessage(Session session, String message, boolean last) {
 		if(session.isOpen()) {
 			Gson gson = new GsonBuilder().create();
 			Command command = gson.fromJson(message, Command.class);
+			String loggedInUser = getUsernameFromSession(session);
 			
 			switch (command.getType()) {
 				case "LOGIN":
@@ -97,19 +97,26 @@ public class WebsocketEndpoint {
 				case "LOGOUT":
 					UserCommand logoutCommand = gson.fromJson(message, UserCommand.class);
 					System.out.println("Trying to logout through Websockets!");
-					String responseLogout = userService.getRest().logoutUser(logoutCommand.getUsername());
-					String debugLogout = responseLogout.equals("User succesfully logged in") ? "Logged in!" : "Not logged in!";
-					try {
-						for(Session sessionToRemove : loggedInSessions.values()) {
-							if(sessionToRemove.equals(session)) {
-								loggedInSessions.remove(sessionToRemove);
-								break;
-							}
+					
+					if(loggedInUser != null) {
+						String responseLogout = userService.getRest().logoutUser(logoutCommand.getUsername());
+						String debugLogout = responseLogout.equals("User succesfully logged in") ? "Logged in!" : "Not logged in!";
+						try {
+							handleLogout(session);
+							session.getBasicRemote().sendText(debugLogout);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-						session.getBasicRemote().sendText(debugLogout);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					}
+					else {
+						System.out.println("WTF");
+						try {
+							session.getBasicRemote().sendText("User must be logged in!");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					break;
 	
@@ -118,29 +125,40 @@ public class WebsocketEndpoint {
 					System.out.println("Trying to do something with groups through Websockets!");
 					
 					
-					if(groupCommand.getAction().equals("CREATE")) {
-						Group group = new Group();
-						group.setId(null);
-						group.setAdmin(groupCommand.getAdmin());
-						group.setMembers(groupCommand.getMembers());
-						group.setName(groupCommand.getName());
-						groupService.getRest().createGroup(group);
+					if(loggedInUser != null) {
+						if(groupCommand.getAction().equals("CREATE")) {
+							Group group = new Group();
+							group.setId(null);
+							group.setAdmin(groupCommand.getAdmin());
+							group.setMembers(groupCommand.getMembers());
+							group.setName(groupCommand.getName());
+							groupService.getRest().createGroup(group);
+						}
+						if(groupCommand.getAction().equals("DELETE")) {
+							groupService.getRest().deleteGroup(groupCommand.getName());
+						}
+						if(groupCommand.getAction().equals("UPDATEMEMBERS")) {
+							Group group = new Group();
+							group.setId(null);
+							group.setMembers(groupCommand.getMembers());
+							group.setName(groupCommand.getName());
+							groupService.getRest().updateGroup(group, group.getName());
+						}
+						if(groupCommand.getAction().equals("GETGROUPS")) {
+							List<Group> groups = groupService.getRest().getGroups();
+							try {
+								session.getBasicRemote().sendText(gson.toJson(groups));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
 					}
-					if(groupCommand.getAction().equals("DELETE")) {
-						groupService.getRest().deleteGroup(groupCommand.getName());
-					}
-					if(groupCommand.getAction().equals("UPDATEMEMBERS")) {
-						Group group = new Group();
-						group.setId(null);
-						group.setMembers(groupCommand.getMembers());
-						group.setName(groupCommand.getName());
-						groupService.getRest().updateGroup(group, group.getName());
-					}
-					if(groupCommand.getAction().equals("GETGROUPS")) {
-						List<Group> groups = groupService.getRest().getGroups();
+					else {
+						System.out.println("WTF");
 						try {
-							session.getBasicRemote().sendText(gson.toJson(groups));
+							session.getBasicRemote().sendText("User must be logged in!");
 						} catch (IOException e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -150,20 +168,30 @@ public class WebsocketEndpoint {
 				case "FRIEND":
 					FriendCommand friendCommand = gson.fromJson(message, FriendCommand.class);
 					
-					if(friendCommand.getAction().equals("ADDFRIEND")) {
-						userService.getRest().addFriend("testUsername", friendCommand.getFriendToAdd());
-						System.out.println("testUsername " + friendCommand.getFriendToAdd());
+					if(loggedInUser != null) {
+						if(friendCommand.getAction().equals("ADDFRIEND")) {
+							userService.getRest().addFriend(loggedInUser, friendCommand.getFriendToAdd());
+							System.out.println(loggedInUser + friendCommand.getFriendToAdd());
+						}
+						if(friendCommand.getAction().equals("REMOVEFRIEND")) {
+							userService.getRest().removeFriend(loggedInUser, friendCommand.getFriendToRemove());
+							System.out.println(loggedInUser + friendCommand.getFriendToRemove());
+						}
+						
+						if(friendCommand.getAction().equals("GETFRIENDS")) {
+							List<User> user = userService.getRest().getAllFriendsOf(loggedInUser);
+							try {
+								session.getBasicRemote().sendText(gson.toJson(user));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
 					}
-					if(friendCommand.getAction().equals("REMOVEFRIEND")) {
-						userService.getRest().removeFriend("testUsername", friendCommand.getFriendToRemove());
-						System.out.println("testUsername " + friendCommand.getFriendToRemove());
-					}
-					
-					if(friendCommand.getAction().equals("GETFRIENDS")) {
-						List<User> user = userService.getRest().getAllFriendsOf("testUsername");
+					else {
 						try {
-							session.getBasicRemote().sendText(gson.toJson(user));
+							session.getBasicRemote().sendText("User must be logged in!");
 						} catch (IOException e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -173,43 +201,52 @@ public class WebsocketEndpoint {
 					MessageCommand messageCommand = gson.fromJson(message, MessageCommand.class);
 					
 					
-					if(messageCommand.getAction().equals("MESSAGEUSER")) {
-						Message m = new Message();
-						m.setId(null);
-						m.setSender(new User("testUsername", ""));
-						List<User> receivers = new ArrayList<User>();
-						receivers.add(new User(messageCommand.getUserToMessage(), ""));
-						m.setReceivers(receivers);
-						m.setContent(messageCommand.getMessage());
-						messageService.getRest().createMessage(m);
-						
+					if(loggedInUser != null) {
+						if(messageCommand.getAction().equals("MESSAGEUSER")) {
+							Message m = new Message();
+							m.setId(null);
+							m.setSender(new User(loggedInUser, ""));
+							List<User> receivers = new ArrayList<User>();
+							receivers.add(new User(messageCommand.getUserToMessage(), ""));
+							m.setReceivers(receivers);
+							m.setContent(messageCommand.getMessage());
+							messageService.getRest().createMessage(m);
+							
+						}
+						if(messageCommand.getAction().equals("MESSAGEGROUP")) {
+							Message m = new Message();
+							m.setId(null);
+							m.setSender(new User(loggedInUser, ""));
+							System.out.println(messageCommand.getGroupToMessage());
+							Group groupToMessage = groupService.getRest().findGroup(messageCommand.getGroupToMessage());
+							m.setReceivers(groupToMessage.getMembers());
+							m.setContent(messageCommand.getMessage());
+							messageService.getRest().createMessage(m);
+						}
+						if(messageCommand.getAction().equals("GETUSERMESSAGES")) {
+							List<Message> messages = messageService.getRest().getMessage(loggedInUser);
+							try {
+								session.getBasicRemote().sendText(gson.toJson(messages));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}if(messageCommand.getAction().equals("GETGROUPMESSAGES")) {
+							List<Message> messages = messageService.getRest().getMessageForGroup(messageCommand.getGroupToMessage());
+							try {
+								session.getBasicRemote().sendText(gson.toJson(messages));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
 					}
-					if(messageCommand.getAction().equals("MESSAGEGROUP")) {
-						Message m = new Message();
-						m.setId(null);
-						m.setSender(new User("testUsername", ""));
-						System.out.println(messageCommand.getGroupToMessage());
-						Group groupToMessage = groupService.getRest().findGroup(messageCommand.getGroupToMessage());
-						m.setReceivers(groupToMessage.getMembers());
-						m.setContent(messageCommand.getMessage());
-						messageService.getRest().createMessage(m);
-					}
-					if(messageCommand.getAction().equals("GETUSERMESSAGES")) {
-						List<Message> messages = messageService.getRest().getMessage("testUsername");
+					else {
 						try {
-							session.getBasicRemote().sendText(gson.toJson(messages));
+							session.getBasicRemote().sendText("User must be logged in!");
 						} catch (IOException e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}if(messageCommand.getAction().equals("GETGROUPMESSAGES")) {
-						List<Message> messages = messageService.getRest().getMessageForGroup(messageCommand.getGroupToMessage());
-						try {
-							session.getBasicRemote().sendText(gson.toJson(messages));
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-					
+					}					
 					break;
 					
 				default:
@@ -219,33 +256,38 @@ public class WebsocketEndpoint {
 		}
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@OnClose
 	public void close(Session sessionToRemove) {
-		for(Session session : loggedInSessions.values()) {
-			if(sessionToRemove.equals(session)) {
-				loggedInSessions.remove(sessionToRemove);
-				break;
-			}
-		}
-		allActiveSessions.remove(sessionToRemove);
+		handleLogout(sessionToRemove);
 		log.info("[CLOSE] Closed session: " + sessionToRemove.getId());
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
-	@OnError
-	public void error(Session sessionToRemove, Throwable t) {
-		for(Session session : loggedInSessions.values()) {
-			if(sessionToRemove.equals(session)) {
-				loggedInSessions.remove(sessionToRemove);
+	private void handleLogout(Session sessionToRemove) {
+		// TODO Auto-generated method stub
+		for(String username : loggedInSessions.keySet()) {
+			if(sessionToRemove.equals(loggedInSessions.get(username))) {
+				loggedInSessions.remove(username);
 				break;
 			}
 		}
 		allActiveSessions.remove(sessionToRemove);
+	}
+
+	@OnError
+	public void error(Session sessionToRemove, Throwable t) {
+		handleLogout(sessionToRemove);
 		log.info("[ERROR] " + sessionToRemove.getId());
 		t.printStackTrace();
 	}
 	
+	public String getUsernameFromSession(Session session) {
+		for (String username : loggedInSessions.keySet()) {
+			if(loggedInSessions.get(username).equals(session)) {
+				return username;
+			}
+		}
+		return null;
+	}
 	
 	
 }
