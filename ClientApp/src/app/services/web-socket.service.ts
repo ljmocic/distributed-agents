@@ -19,6 +19,7 @@ export class WebSocketService{
         this.websocket.onmessage = (event) => {
           console.log('message');
           console.log(event.data)
+          console.log(this.callbacks[0]);
           this.callbacks[0](event.data);
           this.callbacks.splice(0, 1);
         };
@@ -70,8 +71,8 @@ export class WebSocketService{
             'type': 'GROUP',
             'action': action,
             'groupName': groupName,
-            'memberNames': memberNames,
-            'adminName': adminName
+            'memberUsernames': memberNames,
+            'adminUsername': adminName
         };
 
         this.sendMessage(message, callback);

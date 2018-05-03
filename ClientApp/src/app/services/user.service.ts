@@ -30,7 +30,7 @@ export class UserService {
                     this.getMyFriends();
                     this.getAllUsers();
                     this.groupService.setCurrentGroup("");
-                    this.groupService.loadUserGroups(this.me.username);
+                    this.groupService.loadUserGroups(JSON.parse(data).username);
                     this.router.navigate(["/messages"]);
                 });
             }else{
@@ -55,7 +55,8 @@ export class UserService {
     }
 
     getMyFriends() {
-        this.webSocketService.createUserMessage(null, null, "GETFRIENDS", (data) => {
+        alert("getting my friends " + this.me.username);
+        this.webSocketService.createFriendMessage(null, null, "GETFRIENDS", (data) => {
             this.myFriends = JSON.parse(data);
         });
     }
@@ -125,7 +126,8 @@ export class UserService {
 		this.groupService.setCurrentGroup("");
 	}
 	
-	getAllUsers(){
+    getAllUsers(){
+        alert("getting all users");
         this.webSocketService.createUserMessage(null, null, "USERS", (data) => {
             this.applicationUsers = JSON.parse(data);
         });
