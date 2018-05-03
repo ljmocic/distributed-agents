@@ -7,7 +7,7 @@ import { WebSocketService } from "./web-socket.service";
 @Injectable()
 export class GroupService{
 
-    currentGroup: Group;
+    public currentGroup: Group;
     public myGroups: Group[];
 
     constructor(
@@ -54,6 +54,7 @@ export class GroupService{
 	}
 
     loadUserGroups(username: string){
+        alert("loading groups for: "+username);
         this.webSocketService.createGroupMessage(null, [], username, 'GETGROUPSOFUSER', (data) => {
             this.myGroups = JSON.parse(data);
         });
@@ -92,6 +93,7 @@ export class GroupService{
 	}
 	
 	setCurrentGroup(name: string){
+        alert("setting curr group "+name);
         if(name === "" || name === null){
             this.currentGroup = null;
         }else{

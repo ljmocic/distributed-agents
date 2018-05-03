@@ -103,15 +103,23 @@ public class GroupService implements GroupServiceLocal {
 
 	@Override
 	public List<Group> getGroupsOfUser(String username) {
+		System.out.println(username);
 		List<Group> groups = getGroups();
 		
+		System.out.println(groups.size());
 		List<Group> userGroups = new ArrayList<>();
 		for(Group g: groups) {
-			for(User u: g.getMembers()) {
-				if(u.getUsername().equals(username)) {
-					userGroups.add(g);
+			System.out.println(g.getName());
+			if(g.getMembers()!=null) {
+				System.out.println(g.getMembers().size());
+				for(User u: g.getMembers()) {
+					System.out.println(u.getUsername());
+					if(u.getUsername().equals(username)) {
+						userGroups.add(g);
+					}
 				}
 			}
+			
 		}
 		
 		return userGroups;

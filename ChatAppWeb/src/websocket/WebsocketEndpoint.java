@@ -211,7 +211,7 @@ public class WebsocketEndpoint {
 							}
 						}
 						if(groupCommand.getAction().equals("GETGROUPSOFUSER")) {
-							System.out.println("Trying to get all GROUPS OF USER through Websockets!");
+							System.out.println("Trying to get all GROUPS OF USER "+groupCommand.getAdminUsername()+" through Websockets!");
 							List<Group> groups = groupService.getRest().getGroupsOfUser(groupCommand.getAdminUsername());
 							try {
 								session.getBasicRemote().sendText(gson.toJson(groups));
