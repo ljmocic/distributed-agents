@@ -122,6 +122,7 @@ public class GroupService implements GroupServiceLocal {
 			
 		}
 		
+		System.out.println(userGroups.size());
 		return userGroups;
 	}
 }

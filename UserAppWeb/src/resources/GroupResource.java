@@ -95,7 +95,7 @@ public class GroupResource {
 	@GET
 	@Path("/user/{username}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Group> getGroupsOfUser(String username) {
+	public List<Group> getGroupsOfUser(@PathParam(value="username") String username) {
 		return groupService.getGroupsOfUser(username);
 	}
 	
