@@ -1,0 +1,22 @@
+<div class="card">
+  <div class="card-header">
+    Enter your username and password
+  </div>
+  <div class="card-body">
+    <form>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input class="form-control" type="text" id="username" name="username" required [(ngModel)]="user.username"/>
+        <p style="color: red" *ngIf="usernameAlert !== null">{{usernameAlert}}</p>
+        <br />
+        <label for="password">Password</label>
+        <input class="form-control" type="password" id="password" name="password" required [(ngModel)]="user.password"/>
+        <p style="color: red" *ngIf="passwordAlert !== null">{{passwordAlert}}</p>
+        <br />
+        <button class="btn btn-primary btn-la" (click)="loginUser()">Log In</button>
+      </div>
+    </form>
+    <a routerLink="/register">Don't have an account? Register first</a>
+  </div>
+</div>
+<br /> 

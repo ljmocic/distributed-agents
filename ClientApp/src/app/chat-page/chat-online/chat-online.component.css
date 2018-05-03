@@ -1,0 +1,14 @@
+div.card{
+    overflow-y:auto;
+    height: 100%;
+}
+
+div.card-body{
+    overflow-y:auto;
+    height: 100%;
+    padding: 0;
+}
+
+.list-group-item:hover{
+    background-color: #007bff;
+}

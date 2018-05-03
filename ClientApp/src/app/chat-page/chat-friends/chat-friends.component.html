@@ -1,0 +1,11 @@
+<div class="card">
+    <div class="card-body list-group">
+        <div class="list-group-item justify-content-between" *ngFor="let user of userService.applicationUsers">
+            <a>{{user.username}} ({{user.firstName}} {{user.lastName}})</a>
+            <span class="btn-group">
+                <button class="btn btn-success" *ngIf="!checkIfMyFriend(user)" (click)="addFriend(user)">Add</button>
+                <button class="btn btn-danger" *ngIf="checkIfMyFriend(user)" (click)="removeFriend(user)">Remove</button>
+            </span>
+        </div>
+    </div>
+</div>

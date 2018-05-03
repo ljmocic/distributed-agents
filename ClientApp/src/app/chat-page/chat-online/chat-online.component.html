@@ -1,0 +1,13 @@
+<div class="card">
+  <div class="card-header">
+    <form>
+      <div class="form-group">
+        <input type="text" class="form-control form-control-sm" name="query" [(ngModel)]="query" (keyup)="searchFor()"/>
+      </div>
+    </form>  
+  </div>
+  <div class="card-body list-group">
+    <a class="list-group-item" *ngFor="let group of viewGroups" (click)="getMessagesFromGroup(group.name)">{{group.name}}</a>
+    <a class="list-group-item" *ngFor="let user of viewFriends" (click)="getMessagesFromUser(user.username)">{{user.username}}</a>
+  </div>
+</div>

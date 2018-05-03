@@ -1,0 +1,26 @@
+.navbar{
+    background-color: #e9ecef;
+}
+
+.btn{
+    margin-left: 1rem;
+}
+
+.navbar h3{
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-weight: 400;
+}
+
+.form-group{
+    margin-bottom: 0rem;
+    margin-left: 1rem;
+}
+
+.form-group input{
+    width: 500px;
+}
+
+.error{
+    border: 1px solid red;
+    color: red;
+}
