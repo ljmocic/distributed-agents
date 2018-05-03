@@ -53,11 +53,11 @@ public class WebsocketEndpoint {
 
 	Logger log = Logger.getLogger("[INFO] WebsocketEndpoint: ");
 	
-	private HashMap<String, Session> loggedInSessions = new HashMap<String, Session>();
+	public static HashMap<String, Session> loggedInSessions = new HashMap<String, Session>();
 	private List<Session> allActiveSessions = new ArrayList<Session>();
 
 	public WebsocketEndpoint() {
-
+		System.out.println("LOADWS");
 	}
 
 	@OnOpen
@@ -405,6 +405,13 @@ public class WebsocketEndpoint {
 		}
 		return null;
 	}
-	
-	
+
+	public HashMap<String, Session> getLoggedInSessions() {
+		return loggedInSessions;
+	}
+
+	public void setLoggedInSessions(HashMap<String, Session> loggedInSessions) {
+		this.loggedInSessions = loggedInSessions;
+	}
+
 }

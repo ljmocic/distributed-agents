@@ -24,6 +24,9 @@ import interfaces.GroupServiceLocal;
 public class GroupService implements GroupServiceLocal {
 
 	private Datastore datastore;
+	
+	@EJB
+	private NodeService nodeService;
 
 	@EJB
 	private UserService userService;
@@ -42,8 +45,8 @@ public class GroupService implements GroupServiceLocal {
 	@Override
 	public Group createGroup(Group group) {
 		datastore.save(group);
+		nodeService.notifyNodes();
 		return getGroupByName(group.getName());
-		
 	}
 
 	@Override

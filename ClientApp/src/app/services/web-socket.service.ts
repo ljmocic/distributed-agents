@@ -18,7 +18,7 @@ export class WebSocketService{
         };
         this.websocket.onmessage = (event) => {
           console.log('message');
-          console.log(event.data)
+          console.log(event.data);
           console.log(this.callbacks[0]);
           this.callbacks[0](event.data);
           this.callbacks.splice(0, 1);
