@@ -14,16 +14,16 @@ export class ChatFriendsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.userService.getMyFriends();
+    this.userService.getAllUsers();
   }
 
   addFriend(user: User){
     this.userService.addFriend(user);
-    //alert("Dodajem osobu "+user.username+"  kao prijatelja!");
   }
 
   removeFriend(user: User){
     this.userService.removeFriend(user);
-    //alert("Ne zelim osobu "+user.username+" kao prijatelja!");
   }
 
   checkIfMyFriend(user: User) : boolean {

@@ -19,7 +19,9 @@ export class GroupService{
 
     createNewGroup(name: string, admin: User) {
         this.webSocketService.createGroupMessage(name, [admin.username], admin.username, 'CREATE', (data) => {
+            alert('group created');
             this.webSocketService.createGroupMessage(null, [], admin.username, 'GETGROUPSOFUSER', (data) => {
+                alert('synced groups');
                 this.myGroups = JSON.parse(data);
             });
         });
@@ -71,8 +73,13 @@ export class GroupService{
     }
 
     checkIfInGroup(user: string, group: string): boolean{
-        if(this.getGroup(group) !== null){
-            return true;
+        const vv = this.getGroup(group);
+        if(vv !== null){
+            for(let i=0; i<vv.members.length; i++){
+                if(vv.members[i].username === user){
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -91,7 +98,7 @@ export class GroupService{
 	getCurrentGroup(): Group{
 		return this.currentGroup;
 	}
-	
+
 	setCurrentGroup(name: string){
         alert("setting curr group "+name);
         if(name === "" || name === null){

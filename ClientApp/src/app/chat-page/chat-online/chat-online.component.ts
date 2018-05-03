@@ -4,6 +4,7 @@ import { Group } from '../../models/group';
 import { UserService } from '../../services/user.service';
 import { MessageService } from '../../services/message.service';
 import { GroupService } from '../../services/group.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat-online',
@@ -18,7 +19,9 @@ export class ChatOnlineComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private messageService: MessageService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -51,11 +54,15 @@ export class ChatOnlineComponent implements OnInit {
   getMessagesFromUser(username: string){
     //alert("Daj poruke od "+username);
     this.userService.setFriend(username);
+    this.messageService.getMessagesFromUserToUser(this.userService.me, this.userService.getFriend());
+    this.router.navigate(['./messages']);
   }
 
   getMessagesFromGroup(group: string){
     //alert("Daj poruke od "+group);
     this.userService.setCurrentGroup(group);
+    this.messageService.getMessagesFromGroup(this.groupService.currentGroup);
+    this.router.navigate(['./messages']);
   }
 
 }

@@ -52,6 +52,7 @@ public class MessageService implements MessageServiceLocal {
 			recs.add(userService.getUserByUsername(uu.getUsername()));
 		}
 		
+		
 		message.setSender(sender);
 		message.setReceivers(recs);
 		
@@ -60,11 +61,39 @@ public class MessageService implements MessageServiceLocal {
 	}
 
 	@Override
-	public List<Message> getMessagesFromUser(User user) {
+	public List<Message> getMessagesFromChat(User user1, User user2) {
 		List<Message> messages = datastore.createQuery(Message.class)
-                .filter("sender ==", user.getId())
+                .filter("sender ==", user1)
                 .asList();
+		messages.addAll(datastore.createQuery(Message.class)
+                	.filter("sender ==", user2)
+                	.asList());
+		
+		messages = filterMessages(messages, user1, user2);
 		return messages.size() > 0 ? messages : null;
+	}
+	
+	private List<Message> filterMessages(List<Message> messages, User user1, User user2){
+		List<Message> reals = new ArrayList<>();
+		
+		for(Message m: messages) {
+			//poruka od prvog -> da li je drugi u primaocima?
+			if(m.getSender().getUsername().equals(user1.getUsername())) {
+				if(m.getReceivers().size() == 1) {
+					if(m.getReceivers().get(0).getUsername().equals(user2.getUsername())) {
+						reals.add(m);
+					}
+				}
+			}else if(m.getSender().getUsername().equals(user2.getUsername())) {
+				if(m.getReceivers().size() == 1) {
+					if(m.getReceivers().get(0).getUsername().equals(user1.getUsername())) {
+						reals.add(m);
+					}
+				}
+			}
+		}
+		
+		return reals;
 	}
 
 	@Override
@@ -89,7 +118,17 @@ public class MessageService implements MessageServiceLocal {
 			}
 			
 			if(!flag) {
-				groupMessages.add(m);
+				
+				int count = 0;
+				for(User uuu: receivers) {
+					if(uuu.getUsername().equals(m.getSender().getUsername())) {
+						count ++;
+					}
+				}
+				
+				if(count > 1) {
+					groupMessages.add(m);
+				}
 			}
 		}
 		

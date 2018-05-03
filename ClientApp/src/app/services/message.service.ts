@@ -21,8 +21,8 @@ export class MessageService{
     renderMessages(messages: Message[]){
         let newContent = "";
         for(let i=0; i<messages.length; i++){
-        newContent += "<b>" + messages[i].sender.username + " @ <i>" + messages[i].timestamp + "</i></b><br />";
-        newContent += "<p>" + messages[i].content + "</p><br /><hr /><br />";
+            newContent += "<b>" + messages[i].sender.username + " @ <i>" + messages[i].timestamp + "</i></b><br />";
+            newContent += "<p>" + messages[i].content + "</p><br /><hr /><br />";
         }
 
         this.content = newContent;
@@ -43,7 +43,7 @@ export class MessageService{
 
     sendMessage(content: string, sender: User){
         
-		if(this.groupService.getCurrentGroup().members !== null && this.groupService.getCurrentGroup().members.length > 0){
+		if(this.groupService.getCurrentGroup() !== null && this.groupService.getCurrentGroup().members !== null && this.groupService.getCurrentGroup().members.length > 0){
             this.webSocketService.createMessageMessage
                 (null, this.groupService.getCurrentGroup().name, content, 'MESSAGEGROUP', (data) => {
                     this.getMessagesFromGroup(this.groupService.getCurrentGroup());
@@ -60,7 +60,7 @@ export class MessageService{
         let retValM = [];
 
         this.webSocketService.createMessageMessage
-                (null, null, null, 'GETUSERMESSAGES', (data) => {
+                (receiver.username, null, null, 'GETUSERMESSAGES', (data) => {
                 retValM = this.sortByTimeStamp(JSON.parse(data));
                 this.renderMessages(retValM);
         });
@@ -69,7 +69,7 @@ export class MessageService{
     getMessagesFromGroup(group: Group){
         let retValM = [];
         this.webSocketService.createMessageMessage
-            (null, null, null, 'GETGROUPMESSAGES', (data) => {
+            (null, group.name, null, 'GETGROUPMESSAGES', (data) => {
                 retValM = this.sortByTimeStamp(JSON.parse(data));
                 this.renderMessages(retValM);
         });

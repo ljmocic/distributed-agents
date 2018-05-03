@@ -88,14 +88,27 @@ public class UserService implements UserServiceLocal {
 		User u = getUserByUsername(activeUser);
 		User uToUnfriend = getUserByUsername(toUnfriend);
 		
+		boolean flag = false;
 		for(User uu: u.getFriends()) {
 			if(uu.getUsername().equals(uToUnfriend.getUsername())) {
 				u.getFriends().remove(uu);
+				flag = true;
 				break;
 			}
 		}
 		
+		if(!flag) {
+			for(User uu: uToUnfriend.getFriends()) {
+				if(uu.getUsername().equals(activeUser)) {
+					uToUnfriend.getFriends().remove(uu);
+					flag = true;
+					break;
+				}
+			}
+		}
+		
 		createUser(u);
+		createUser(uToUnfriend);
 	}
 	
 	@Override

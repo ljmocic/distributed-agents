@@ -18,18 +18,18 @@ public class MessageResourceProxy implements MessageResourceInterface {
 	MessageServiceProxy messageServiceProxy;
 	
 	@Override
-	public List<Object> getAllMessages() {
+	public List<Message> getAllMessages() {
 		return messageServiceProxy.getRest().getAllMessages();
 	}
 
 	@Override
-	public Message createMessage(Message message) {
+	public Object createMessage(Message message) {
 		return messageServiceProxy.getRest().createMessage(message);
 	}
 
 	@Override
-	public List<Message> getMessage(String username) {
-		return messageServiceProxy.getRest().getMessage(username);
+	public List<Message> getMessage(String username1, String username2) {
+		return messageServiceProxy.getRest().getMessage(username1, username2);
 	}
 
 	@Override
@@ -38,13 +38,13 @@ public class MessageResourceProxy implements MessageResourceInterface {
 	}
 
 	@Override
-	public void updateMessage(Object message) {
+	public void updateMessage(Message message) {
 		messageServiceProxy.getRest().updateMessage(message);
 		
 	}
 
 	@Override
-	public void deleteMessage(Object message) {
+	public void deleteMessage(Message message) {
 		messageServiceProxy.getRest().deleteMessage(message);
 	}
 

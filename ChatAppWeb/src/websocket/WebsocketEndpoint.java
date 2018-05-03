@@ -180,9 +180,21 @@ public class WebsocketEndpoint {
 							group.setMembers(groupCommand.getMembers());
 							group.setName(groupCommand.getName());
 							groupService.getRest().createGroup(group);
+							try {
+								session.getBasicRemote().sendText("GROUP CREATED");
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						if(groupCommand.getAction().equals("DELETE")) {
 							groupService.getRest().deleteGroup(groupCommand.getName());
+							try {
+								session.getBasicRemote().sendText("GROUP CREATED");
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						if(groupCommand.getAction().equals("UPDATEMEMBERS")) {
 							System.out.println("Trying to UPDATE GROUP through Websockets!");
@@ -190,7 +202,14 @@ public class WebsocketEndpoint {
 							group.setId(null);
 							group.setMembers(groupCommand.getMembers());
 							group.setName(groupCommand.getName());
+							group.setAdmin(groupCommand.getAdmin());
 							groupService.getRest().updateGroup(group, group.getName());
+							try {
+								session.getBasicRemote().sendText("GROUP UPDATED");
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						if(groupCommand.getAction().equals("GETGROUPS")) {
 							System.out.println("Trying to get all GROUPS through Websockets!");
@@ -242,11 +261,21 @@ public class WebsocketEndpoint {
 							System.out.println("Trying to ADD FR through Websockets!");
 							userService.getRest().addFriend(loggedInUser, friendCommand.getFriendToAdd());
 							System.out.println(loggedInUser + friendCommand.getFriendToAdd());
+							try {
+								session.getBasicRemote().sendText("friend added");
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 						if(friendCommand.getAction().equals("REMOVEFRIEND")) {
 							System.out.println("Trying to REMOVE FR through Websockets!");
 							userService.getRest().removeFriend(loggedInUser, friendCommand.getFriendToRemove());
 							System.out.println(loggedInUser + friendCommand.getFriendToRemove());
+							try {
+								session.getBasicRemote().sendText("friend REMOVED");
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 						
 						if(friendCommand.getAction().equals("GETFRIENDS")) {
@@ -285,7 +314,12 @@ public class WebsocketEndpoint {
 							m.setReceivers(receivers);
 							m.setContent(messageCommand.getMessage());
 							messageService.getRest().createMessage(m);
-							
+							try {
+								session.getBasicRemote().sendText("MESSAGE SENT");
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						if(messageCommand.getAction().equals("MESSAGEGROUP")) {
 							System.out.println("Trying to get MESSAGE GROUP through Websockets!");
@@ -297,10 +331,16 @@ public class WebsocketEndpoint {
 							m.setReceivers(groupToMessage.getMembers());
 							m.setContent(messageCommand.getMessage());
 							messageService.getRest().createMessage(m);
+							try {
+								session.getBasicRemote().sendText("MESSAGE SENT");
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						if(messageCommand.getAction().equals("GETUSERMESSAGES")) {
 							System.out.println("Trying to get all user MSGS through Websockets!");
-							List<Message> messages = messageService.getRest().getMessage(loggedInUser);
+							List<Message> messages = messageService.getRest().getMessage(loggedInUser, messageCommand.getUserToMessage());
 							try {
 								session.getBasicRemote().sendText(gson.toJson(messages));
 							} catch (IOException e) {

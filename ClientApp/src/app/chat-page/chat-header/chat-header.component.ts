@@ -20,7 +20,8 @@ export class ChatHeaderComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private messageService: MessageService
   ) {
   }
 
@@ -28,6 +29,7 @@ export class ChatHeaderComponent implements OnInit {
     this.name = "";
     this.newGroupOpen = false;
     this.groupError = false;
+    this.messageService.content = "";
   }
 
   createGroup(){

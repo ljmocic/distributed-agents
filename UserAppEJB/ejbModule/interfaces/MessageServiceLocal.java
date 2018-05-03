@@ -12,9 +12,8 @@ public interface MessageServiceLocal {
 
 	List<Message> getMessages();
 	Message createMessage(Message Message);
-	List<Message> getMessagesFromUser(User user);
+	List<Message> getMessagesFromChat(User user1, User user2);
 	List<Message> getMessagesFromGroup(String group);
 	void updateMessage(Message message);
 	void deleteMessage(Message message);
-	
 }

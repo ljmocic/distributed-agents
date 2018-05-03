@@ -19,18 +19,18 @@ public interface MessageResourceInterface {
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Object> getAllMessages();
+	public List<Message> getAllMessages();
 	
 	@POST
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Message createMessage(Message message);
+	public Object createMessage(Message message);
 	
 	@GET
-	@Path("/user/{username}")
+	@Path("/user1/{username1}/user2/{username2}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Message> getMessage(@PathParam("username") String username);
+	public List<Message> getMessage(@PathParam("username1") String username1, @PathParam("username2") String username2);
 	
 	@GET
 	@Path("/group/{name}")
@@ -40,11 +40,11 @@ public interface MessageResourceInterface {
 	@PUT
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateMessage(Object message);
+	public void updateMessage(Message message);
 	
 	@DELETE
 	@Path("/delete/{messageId}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void deleteMessage(Object message);
+	public void deleteMessage(Message message);
 	
 }

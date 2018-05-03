@@ -45,11 +45,12 @@ public class MessageResource {
 	}
 	
 	@GET
-	@Path("/user/{username}")
+	@Path("/user1/{username1}/user2/{username2}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Message> getMessage(@PathParam("username") String username) {
-		User user = userService.getUserByUsername(username);
-		return messageService.getMessagesFromUser(user);
+	public List<Message> getMessage(@PathParam("username1") String username1, @PathParam("username2") String username2) {
+		User user1 = userService.getUserByUsername(username1);
+		User user2 = userService.getUserByUsername(username2);
+		return messageService.getMessagesFromChat(user1, user2);
 	}
 	
 	@GET

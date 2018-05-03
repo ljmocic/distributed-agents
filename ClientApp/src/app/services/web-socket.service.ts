@@ -56,7 +56,7 @@ export class WebSocketService{
 
     createMessageMessage(userToMessage: string, groupToMessage: string, content: string, action: string, callback: any){
         const message = {
-            'type': 'GROUP',
+            'type': 'MESSAGE',
             'action': action,
             'userToMessage': userToMessage,
             'groupToMessage': groupToMessage,
@@ -75,6 +75,7 @@ export class WebSocketService{
             'adminUsername': adminName
         };
 
+        console.log(message);
         this.sendMessage(message, callback);
 
     }

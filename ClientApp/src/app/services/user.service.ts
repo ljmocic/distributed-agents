@@ -31,7 +31,7 @@ export class UserService {
                     this.getAllUsers();
                     this.groupService.setCurrentGroup("");
                     this.groupService.loadUserGroups(JSON.parse(data).username);
-                    this.router.navigate(["/messages"]);
+                    this.router.navigate(["/messages/friends"]);
                 });
             }else{
                 this.me = null;
@@ -41,17 +41,15 @@ export class UserService {
 
 
     logoutUser(){
-        this.webSocketService.createUserMessage(this.me.username, this.me.password, 'LOGOUT', this.logoutCallback);
-    }
-
-    logoutCallback(data: any){
-        this.me = null;
-        this.myFriends = [];
-        this.applicationUsers = [];
-        this.friend = null;
-        this.groupService.setCurrentGroup("");
-        this.groupService.myGroups = [];
-        this.router.navigate(["./"]);
+        this.webSocketService.createUserMessage(this.me.username, this.me.password, 'LOGOUT', (data) => {
+           this.me = null;
+            this.myFriends = [];
+            this.applicationUsers = [];
+            this.friend = null;
+            this.groupService.setCurrentGroup("");
+            this.groupService.myGroups = [];
+            this.router.navigate(["./"]);
+        });
     }
 
     getMyFriends() {
@@ -64,8 +62,8 @@ export class UserService {
     createUser(user: User){
         this.webSocketService.createUserMessage(user.username, user.password, 'REGISTER', (data) => {
             this.me = JSON.parse(data);
-            this.groupService.setCurrentGroup("");
             this.groupService.myGroups = [];
+            this.groupService.setCurrentGroup("");
             this.getAllUsers();
             this.router.navigate(["/messages"]);
         });
@@ -73,7 +71,9 @@ export class UserService {
 
     addFriend(user: User) {
         this.webSocketService.createFriendMessage(user.username, null, 'ADDFRIEND',(data) => {
+            alert("friend added");
             this.webSocketService.createFriendMessage(null, null,'GETFRIENDS', (data) => {
+                alert("friends synchronized");
                 this.myFriends = JSON.parse(data);
                 this.getAllUsers();
             });
@@ -82,7 +82,9 @@ export class UserService {
 
     removeFriend(user: User) {
         this.webSocketService.createFriendMessage(null, user.username, 'REMOVEFRIEND', (data) => {
+            alert("friend removed");
             this.webSocketService.createFriendMessage(null, null,'GETFRIENDS', (data) => {
+                alert("friends synchronized");
                 this.myFriends = JSON.parse(data);
                 this.getAllUsers();
             });
@@ -129,12 +131,13 @@ export class UserService {
     getAllUsers(){
         alert("getting all users");
         this.webSocketService.createUserMessage(null, null, "USERS", (data) => {
+            alert("Users synced");
             this.applicationUsers = JSON.parse(data);
         });
     }
     
     setCurrentGroup(name: string){
+        this.setFriend("");
         this.groupService.setCurrentGroup(name);
-		this.setFriend("");
     }
 }

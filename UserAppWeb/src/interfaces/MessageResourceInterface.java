@@ -28,9 +28,9 @@ public interface MessageResourceInterface {
 	public Object createMessage(Message message);
 	
 	@GET
-	@Path("/user/{username}")
+	@Path("/user1/{username1}/user2/{username2}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Message> getMessage(@PathParam("username") String username);
+	public List<Message> getMessage(@PathParam("username1") String username1, @PathParam("username2") String username2);
 	
 	@GET
 	@Path("/group/{name}")

@@ -70,7 +70,16 @@ export class ChatMessagesComponent implements OnInit {
     if(this.groupService.getCurrentGroup() === null){
       return false;
     }
-    return this.groupService.getCurrentGroup().admin.username === this.userService.getCurrentLoggedUser().username;
+
+    if(this.groupService.getCurrentGroup().admin === null || this.groupService.getCurrentGroup().admin === undefined){
+      return false;
+    }
+
+    if(this.userService.getCurrentLoggedUser() !== null){
+      return this.groupService.getCurrentGroup().admin.username === this.userService.getCurrentLoggedUser().username;
+    }
+
+    return false;
   }
 
 }
