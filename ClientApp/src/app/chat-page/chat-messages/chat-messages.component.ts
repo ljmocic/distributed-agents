@@ -15,43 +15,37 @@ export class ChatMessagesComponent implements OnInit {
 
   minusOpen: boolean;
   plusOpen: boolean;
+  content: string;
 
   constructor(
     private userService: UserService,
-    private messageService: MessageService,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit() {
+    this.content = "";
     this.minusOpen = false;
     this.plusOpen = false;
   }
 
   getTitle(): String{
-    if(this.messageService.receivers.length > 0 )
-      return this.messageService.receivers[0].username+" ("+this.messageService.receivers[0].firstName+" "+this.messageService.receivers[0].lastName+")";
-    else
-      return "";
-  }
-
-  getMessages(): Message[]{
-    let messages = [];
-    if(this.groupService.currentGroup === null)
-      messages = this.messageService.getMessagesFromUserToUser(this.userService.me, this.messageService.receivers[0]);
-    else
-      messages = this.messageService.getMessagesFromGroup(this.groupService.currentGroup);
-    return messages;
-  }
-
-  renderMessages(): String{
-    const messages = this.getMessages();
-    let newContent = "";
-    for(let i=0; i<messages.length; i++){
-      newContent += "<b>" + messages[i].sender.username + " @ <i>" + messages[i].timestamp + "</i></b><br />";
-      newContent += "<p>" + messages[i].content + "</p><br /><hr /><br />";
+    if (this.groupService.getCurrentGroup() !== null && this.userService.getFriend() === null){
+      return this.groupService.getCurrentGroup().name;
+    }else if (this.groupService.getCurrentGroup() === null && this.userService.getFriend() !== null){
+      return this.userService.getFriend().username;
     }
 
-    return newContent;
+    return "";
+  }
+
+  getMessages() {
+    if(this.groupService.getCurrentGroup() !== null && this.userService.getFriend() === null){
+        this.messageService.getMessagesFromGroup(this.groupService.getCurrentGroup());
+    }else if (this.groupService.getCurrentGroup() === null && this.userService.getFriend() !== null){
+        this.messageService.getMessagesFromUserToUser(this.userService.getCurrentLoggedUser(), this.userService.getFriend());
+    }
+  
   }
 
   openDropdownPlus() {
@@ -64,21 +58,19 @@ export class ChatMessagesComponent implements OnInit {
 
   addUser(user: User){
     this.groupService.addMember(user);
-    this.messageService.receivers = this.groupService.currentGroup.members;
     this.plusOpen = false;
   }
 
   removeUser(user: User){
     this.groupService.removeMember(user);
-    this.messageService.receivers = this.groupService.currentGroup.members;
     this.minusOpen = false;
   }
 
   checkAuthority(){
-    if(this.groupService.currentGroup === null){
+    if(this.groupService.getCurrentGroup() === null){
       return false;
     }
-    return this.groupService.currentGroup.admin.username === this.userService.me.username;
+    return this.groupService.getCurrentGroup().admin.username === this.userService.getCurrentLoggedUser().username;
   }
 
 }

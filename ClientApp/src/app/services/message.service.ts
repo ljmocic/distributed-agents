@@ -2,40 +2,30 @@ import { Injectable } from "@angular/core";
 import { User } from "../models/user";
 import { Message } from "../models/message";
 import { Group } from "../models/group";
+import { UserService } from "./user.service";
+import { GroupService } from "./group.service";
+import { WebSocketService } from "./web-socket.service";
 
 @Injectable()
 export class MessageService{
+    
+    public content: string;
 
-    receivers: User[];
-    messages: Message[];
-
-    constructor(){
-        this.receivers = [];
-        this.messages = [];
+    constructor(
+        private groupService: GroupService,
+        private userService: UserService,
+        private webSocketService: WebSocketService
+	){
     }
 
-    sendMessage(content: string, sender: User){
-        let message = new Message(Date.now(), sender, this.receivers, content);
-        alert("[" + message.timestamp + "] Saljem poruku sadrzaja: "+message.content);
-        this.messages.push(message);
-    }
-
-    getMessagesFromUserToUser(sender: User, receiver: User): Message[]{
-        let retValM = [];
-        for(let i=0; i<this.messages.length; i++){
-            if(this.messages[i].sender.username === sender.username){
-                if(this.messages[i].receivers.length === 1 && this.messages[i].receivers[0].username === receiver.username){
-                    retValM.push(this.messages[i]);
-                }
-            }
-            if(this.messages[i].sender.username === receiver.username){
-                if(this.messages[i].receivers.length === 1 && this.messages[i].receivers[0].username === sender.username){
-                    retValM.push(this.messages[i]);
-                }
-            }
+    renderMessages(messages: Message[]){
+        let newContent = "";
+        for(let i=0; i<messages.length; i++){
+        newContent += "<b>" + messages[i].sender.username + " @ <i>" + messages[i].timestamp + "</i></b><br />";
+        newContent += "<p>" + messages[i].content + "</p><br /><hr /><br />";
         }
 
-        return this.sortByTimeStamp(retValM);
+        this.content = newContent;
     }
 
     sortByTimeStamp(messages: Message[]): Message[]{
@@ -49,36 +39,40 @@ export class MessageService{
         if (a.timestamp > b.timestamp)
           return 1;
         return 0;
-      }
+    }
 
-    getMessagesFromGroup(group: Group): Message[]{
-        let retValM = [];
-        for(let i=0; i<this.messages.length; i++){
-            let messRec = this.messages[i].receivers;
-            messRec.push(this.messages[i].sender);
-
-            let maxflag = false;
-            for(let j=0; j<group.members.length; j++){
-                let flag = false;
-                for(let k=0; k<messRec.length; k++){
-                    if(group.members[j].username === messRec[k].username){
-                        flag = true;
-                        break;
-                    }
-                }
-
-                if(flag === false){
-                    maxflag = true;
-                    break;
-                }
-            }
-
-            if(maxflag === false){
-                retValM.push(this.messages[i]);
-            }
+    sendMessage(content: string, sender: User){
+        
+		if(this.groupService.getCurrentGroup().members !== null && this.groupService.getCurrentGroup().members.length > 0){
+            this.webSocketService.createMessageMessage
+                (null, this.groupService.getCurrentGroup().name, content, 'MESSAGEGROUP', (data) => {
+                    this.getMessagesFromGroup(this.groupService.getCurrentGroup());
+                });
+		}else if(this.userService.getFriend() !== null){
+            this.webSocketService.createMessageMessage
+                (this.userService.getFriend().username, null, content, 'MESSAGEUSER', (data) => {
+                    this.getMessagesFromUserToUser(this.userService.getCurrentLoggedUser(), this.userService.getFriend());
+                });
         }
+    }
 
-        return retValM;
+    getMessagesFromUserToUser(sender: User, receiver: User){
+        let retValM = [];
+
+        this.webSocketService.createMessageMessage
+                (null, null, null, 'GETUSERMESSAGES', (data) => {
+                retValM = this.sortByTimeStamp(JSON.parse(data));
+                this.renderMessages(retValM);
+        });
+    }
+
+    getMessagesFromGroup(group: Group){
+        let retValM = [];
+        this.webSocketService.createMessageMessage
+            (null, null, null, 'GETGROUPMESSAGES', (data) => {
+                retValM = this.sortByTimeStamp(JSON.parse(data));
+                this.renderMessages(retValM);
+        });
     }
 
 }

@@ -18,8 +18,7 @@ export class LoginCardComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private router: Router,
-    private groupService: GroupService
+    private router: Router
   ) { 
   }
 
@@ -45,7 +44,5 @@ export class LoginCardComponent implements OnInit {
     }
 
     this.userService.loginUser(this.user);
-    this.groupService.myGroups = this.groupService.getGroupsOf(this.userService.me.username);
-    this.router.navigate(['/messages']);
   }
 }

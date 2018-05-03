@@ -1,5 +1,5 @@
 <div class="navbar">
-    <span>{{userService.me.username}}</span>
+    <span>{{userService.getCurrentLoggedUser().username}}</span>
     <button class="btn btn-primary btn-la form-inline" (click)="manageGroupForm()">New Group</button>
     <form class="form-group form-inline" *ngIf="newGroupOpen">
         <input [ngClass]="{ 'error' : groupError }" class="form-control" type="text" value="Enter group name" name="name" [(ngModel)]="name" (focus)="focusOn()"/>

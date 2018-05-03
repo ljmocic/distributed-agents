@@ -1,5 +1,6 @@
 package services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -98,5 +99,21 @@ public class GroupService implements GroupServiceLocal {
 		gg.setMembers(group.getMembers());
 		
 		createGroup(gg);
+	}
+
+	@Override
+	public List<Group> getGroupsOfUser(String username) {
+		List<Group> groups = getGroups();
+		
+		List<Group> userGroups = new ArrayList<>();
+		for(Group g: groups) {
+			for(User u: g.getMembers()) {
+				if(u.getUsername().equals(username)) {
+					userGroups.add(g);
+				}
+			}
+		}
+		
+		return userGroups;
 	}
 }

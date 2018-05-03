@@ -18,41 +18,44 @@ export class ChatOnlineComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private messageService: MessageService,
     private groupService: GroupService
   ) { }
 
   ngOnInit() {
     this.query = "search for friends ...";
+    this.updateData();
+  }
+
+  updateData(){
     this.viewFriends = this.userService.myFriends;
     this.viewGroups = this.groupService.myGroups;
   }
 
   searchFor(){
     this.viewFriends = [];
-    for (let i=0; i<this.userService.myFriends.length; i++) {
-      if (this.userService.myFriends[i].username.indexOf(this.query) > -1) {
-        this.viewFriends.push(this.userService.myFriends[i]);
+    let myFriends = this.userService.myFriends;
+    for (let i=0; i<myFriends.length; i++) {
+      if (myFriends[i].username.indexOf(this.query) > -1) {
+        this.viewFriends.push(myFriends[i]);
       }
     }
     this.viewGroups = [];
-    for (let i=0; i<this.groupService.myGroups.length; i++) {
-      if (this.groupService.myGroups[i].name.indexOf(this.query) > -1) {
-        this.viewGroups.push(this.groupService.myGroups[i]);
+    let myGroups = this.groupService.myGroups;
+    for (let i=0; i<myGroups.length; i++) {
+      if (myGroups[i].name.indexOf(this.query) > -1) {
+        this.viewGroups.push(myGroups[i]);
       }
     }
   }
 
   getMessagesFromUser(username: string){
-    alert("Daj poruke od "+username);
-    this.messageService.receivers = [ this.userService.getUser(username) ];
-    this.groupService.currentGroup = null;
+    //alert("Daj poruke od "+username);
+    this.userService.setFriend(username);
   }
 
   getMessagesFromGroup(group: string){
-    alert("Daj poruke od "+group);
-    this.groupService.currentGroup = this.groupService.getGroup(group);
-    this.messageService.receivers = this.groupService.currentGroup.members;
+    //alert("Daj poruke od "+group);
+    this.userService.setCurrentGroup(group);
   }
 
 }

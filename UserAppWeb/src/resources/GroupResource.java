@@ -92,5 +92,11 @@ public class GroupResource {
 	public void removeFromGroup(@PathParam(value="name") String name, @PathParam(value="username") String username) {
 		groupService.removeUserFromGroup(username, name);
 	}
+	@GET
+	@Path("/user/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Group> getGroupsOfUser(String username) {
+		return groupService.getGroupsOfUser(username);
+	}
 	
 }

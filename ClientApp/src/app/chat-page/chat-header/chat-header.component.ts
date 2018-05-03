@@ -20,8 +20,7 @@ export class ChatHeaderComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private groupService: GroupService,
-    private messageService: MessageService
+    private groupService: GroupService
   ) {
   }
 
@@ -41,7 +40,7 @@ export class ChatHeaderComponent implements OnInit {
       return;
     }
 
-    this.groupService.createNewGroup(this.name, this.userService.me);
+    this.groupService.createNewGroup(this.name, this.userService.getCurrentLoggedUser());
     this.newGroupOpen = false;
   }
 
@@ -65,11 +64,6 @@ export class ChatHeaderComponent implements OnInit {
 
   logout() {
     this.userService.logoutUser();
-    this.groupService.currentGroup = null;
-    this.groupService.myGroups = null;
-    this.messageService.receivers = null;
-    this.userService.myFriends = null;
-    this.router.navigate(['./']);
   }
 
 }

@@ -22,6 +22,7 @@ import { ChatMessagesComponent } from './chat-page/chat-messages/chat-messages.c
 import { UserService } from './services/user.service';
 import { GroupService } from './services/group.service';
 import { MessageService } from './services/message.service';
+import { WebSocketService } from './services/web-socket.service';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,7 @@ import { MessageService } from './services/message.service';
     FormsModule,
     AppRoutingModule
   ],
-  providers: [UserService, GroupService, MessageService],
+  providers: [UserService, GroupService, MessageService, WebSocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

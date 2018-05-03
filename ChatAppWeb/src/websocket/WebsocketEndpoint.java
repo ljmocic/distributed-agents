@@ -119,7 +119,53 @@ public class WebsocketEndpoint {
 						}
 					}
 					break;
-	
+
+				case "REGISTER":
+					UserCommand registerCommand = gson.fromJson(message, UserCommand.class);
+					System.out.println("Trying to register through Websockets!");
+					System.out.println(registerCommand.getUsername() + registerCommand.getPassword());
+					
+					User responseRegister = userService.getRest().createUser(registerCommand.getUsername(), registerCommand.getPassword());
+					
+					if(responseRegister != null) {
+						try {
+							loggedInSessions.put(registerCommand.getUsername(), session);
+							session.getBasicRemote().sendText(gson.toJson(responseRegister));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					break;
+					
+				case "USER":
+					UserCommand getUserCommand = gson.fromJson(message, UserCommand.class);
+					System.out.println("Trying to get user through Websockets!");
+					System.out.println(getUserCommand.getUsername());
+				
+					User responseGetUser = userService.getRest().getUser(getUserCommand.getUsername());
+					
+					if(responseGetUser != null) {
+						try {
+							session.getBasicRemote().sendText(gson.toJson(responseGetUser));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					break;
+					
+				case "USERS":
+					System.out.println("Trying to get all users through Websockets!");
+					List<User> responseGetUsers = userService.getRest().getAllUsers();
+					
+					if(responseGetUsers != null) {
+						try {
+							session.getBasicRemote().sendText(gson.toJson(responseGetUsers));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					break;
+					
 				case "GROUP":
 					GroupCommand groupCommand = gson.fromJson(message, GroupCommand.class);
 					System.out.println("Trying to do something with groups through Websockets!");
@@ -127,6 +173,7 @@ public class WebsocketEndpoint {
 					
 					if(loggedInUser != null) {
 						if(groupCommand.getAction().equals("CREATE")) {
+							System.out.println("Trying to CREATE GROUP through Websockets!");
 							Group group = new Group();
 							group.setId(null);
 							group.setAdmin(groupCommand.getAdmin());
@@ -138,6 +185,7 @@ public class WebsocketEndpoint {
 							groupService.getRest().deleteGroup(groupCommand.getName());
 						}
 						if(groupCommand.getAction().equals("UPDATEMEMBERS")) {
+							System.out.println("Trying to UPDATE GROUP through Websockets!");
 							Group group = new Group();
 							group.setId(null);
 							group.setMembers(groupCommand.getMembers());
@@ -145,7 +193,26 @@ public class WebsocketEndpoint {
 							groupService.getRest().updateGroup(group, group.getName());
 						}
 						if(groupCommand.getAction().equals("GETGROUPS")) {
+							System.out.println("Trying to get all GROUPS through Websockets!");
 							List<Group> groups = groupService.getRest().getGroups();
+							try {
+								session.getBasicRemote().sendText(gson.toJson(groups));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						if(groupCommand.getAction().equals("GETGROUP")) {
+							System.out.println("Trying to get GROUP through Websockets!");
+							Group group = groupService.getRest().findGroup(groupCommand.getName());
+							try {
+								session.getBasicRemote().sendText(gson.toJson(group));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						if(groupCommand.getAction().equals("GETGROUPSOFUSER")) {
+							System.out.println("Trying to get all GROUPS OF USER through Websockets!");
+							List<Group> groups = groupService.getRest().getGroupsOfUser(groupCommand.getAdminUsername());
 							try {
 								session.getBasicRemote().sendText(gson.toJson(groups));
 							} catch (IOException e) {
@@ -166,19 +233,25 @@ public class WebsocketEndpoint {
 					break;
 					
 				case "FRIEND":
+					System.out.println("Trying to DO SOMETHING WITH FRIENDS through Websockets!");
+					
 					FriendCommand friendCommand = gson.fromJson(message, FriendCommand.class);
 					
 					if(loggedInUser != null) {
 						if(friendCommand.getAction().equals("ADDFRIEND")) {
+							System.out.println("Trying to ADD FR through Websockets!");
 							userService.getRest().addFriend(loggedInUser, friendCommand.getFriendToAdd());
 							System.out.println(loggedInUser + friendCommand.getFriendToAdd());
 						}
 						if(friendCommand.getAction().equals("REMOVEFRIEND")) {
+							System.out.println("Trying to REMOVE FR through Websockets!");
 							userService.getRest().removeFriend(loggedInUser, friendCommand.getFriendToRemove());
 							System.out.println(loggedInUser + friendCommand.getFriendToRemove());
 						}
 						
 						if(friendCommand.getAction().equals("GETFRIENDS")) {
+							System.out.println("Trying to GET FRIENDS through Websockets!");
+							System.out.println(loggedInUser);
 							List<User> user = userService.getRest().getAllFriendsOf(loggedInUser);
 							try {
 								session.getBasicRemote().sendText(gson.toJson(user));
@@ -203,6 +276,7 @@ public class WebsocketEndpoint {
 					
 					if(loggedInUser != null) {
 						if(messageCommand.getAction().equals("MESSAGEUSER")) {
+							System.out.println("Trying to MESSAGE USER through Websockets!");
 							Message m = new Message();
 							m.setId(null);
 							m.setSender(new User(loggedInUser, ""));
@@ -214,6 +288,7 @@ public class WebsocketEndpoint {
 							
 						}
 						if(messageCommand.getAction().equals("MESSAGEGROUP")) {
+							System.out.println("Trying to get MESSAGE GROUP through Websockets!");
 							Message m = new Message();
 							m.setId(null);
 							m.setSender(new User(loggedInUser, ""));
@@ -224,6 +299,7 @@ public class WebsocketEndpoint {
 							messageService.getRest().createMessage(m);
 						}
 						if(messageCommand.getAction().equals("GETUSERMESSAGES")) {
+							System.out.println("Trying to get all user MSGS through Websockets!");
 							List<Message> messages = messageService.getRest().getMessage(loggedInUser);
 							try {
 								session.getBasicRemote().sendText(gson.toJson(messages));
@@ -231,6 +307,7 @@ public class WebsocketEndpoint {
 								e.printStackTrace();
 							}
 						}if(messageCommand.getAction().equals("GETGROUPMESSAGES")) {
+							System.out.println("Trying to get all GROUP MSGS through Websockets!");
 							List<Message> messages = messageService.getRest().getMessageForGroup(messageCommand.getGroupToMessage());
 							try {
 								session.getBasicRemote().sendText(gson.toJson(messages));

@@ -1,74 +1,104 @@
 import { Injectable } from "@angular/core";
 import { User } from "../models/user";
 import { GroupService } from "./group.service";
+import { WebSocketService } from "./web-socket.service";
+import { Router } from "@angular/router";
 
 @Injectable()
 export class UserService {
 
+    public me: User;
+    private friend: User;
     public applicationUsers: User[];
     public myFriends: User[];
-    public me: User;
 
     constructor(
-        private groupService: GroupService) {
-        this.applicationUsers = [];
-        this.myFriends = [];
+        private groupService: GroupService,
+        private webSocketService: WebSocketService,
+        private router: Router) {
+		this.friend = null;
+        this.me = null;
+        this.applicationUsers=[];
+        this.myFriends=[];
     }
 
     loginUser(user: User){
-        this.me = this.getUser(user.username);
-        this.myFriends = this.getFriendsOf(this.me.username);
-        this.groupService.myGroups = this.groupService.getGroupsOf(this.me.username);
+        this.webSocketService.createUserMessage(user.username, user.password, 'LOGIN', (data) => {
+            if(data === "Logged in!"){
+                this.webSocketService.createUserMessage(user.username, null, "USER", (data) => {
+                    this.me = JSON.parse(data);
+                    this.getMyFriends();
+                    this.getAllUsers();
+                    this.groupService.setCurrentGroup("");
+                    this.groupService.loadUserGroups(this.me.username);
+                    this.router.navigate(["/messages"]);
+                });
+            }else{
+                this.me = null;
+            }
+        });
     }
 
+
     logoutUser(){
+        this.webSocketService.createUserMessage(this.me.username, this.me.password, 'LOGOUT', this.logoutCallback);
+    }
+
+    logoutCallback(data: any){
         this.me = null;
+        this.myFriends = [];
+        this.applicationUsers = [];
+        this.friend = null;
+        this.groupService.setCurrentGroup("");
+        this.groupService.myGroups = [];
+        this.router.navigate(["./"]);
+    }
+
+    getMyFriends() {
+        this.webSocketService.createUserMessage(null, null, "GETFRIENDS", (data) => {
+            this.myFriends = JSON.parse(data);
+        });
     }
 
     createUser(user: User){
-        this.applicationUsers.push(user);
-        this.me = user;
-        this.myFriends = this.getFriendsOf(this.me.username);
+        this.webSocketService.createUserMessage(user.username, user.password, 'REGISTER', (data) => {
+            this.me = JSON.parse(data);
+            this.groupService.setCurrentGroup("");
+            this.groupService.myGroups = [];
+            this.getAllUsers();
+            this.router.navigate(["/messages"]);
+        });
     }
 
     addFriend(user: User) {
-        if(this.myFriends.indexOf(user) === -1){
-            this.me.friends.push(user);
-            this.myFriends.push(user);
-            for(let i=0; i<this.applicationUsers.length; i++){
-                if(this.applicationUsers[i].username === this.me.username){
-                    this.applicationUsers[i] = this.me;
-                    break;
-                }
-            }
-        }
+        this.webSocketService.createFriendMessage(user.username, null, 'ADDFRIEND',(data) => {
+            this.webSocketService.createFriendMessage(null, null,'GETFRIENDS', (data) => {
+                this.myFriends = JSON.parse(data);
+                this.getAllUsers();
+            });
+        });
     }
 
     removeFriend(user: User) {
-        if(this.myFriends.indexOf(user) > -1){
-            this.me.friends.splice(this.me.friends.indexOf(user), 1);
-            this.myFriends.splice(this.myFriends.indexOf(user), 1);
-            for(let i=0; i<this.applicationUsers.length; i++){
-                if(this.applicationUsers[i].username === this.me.username){
-                    this.applicationUsers[i] = this.me;
-                    break;
-                }
-            }
-        }
+        this.webSocketService.createFriendMessage(null, user.username, 'REMOVEFRIEND', (data) => {
+            this.webSocketService.createFriendMessage(null, null,'GETFRIENDS', (data) => {
+                this.myFriends = JSON.parse(data);
+                this.getAllUsers();
+            });
+        });
     }
 
     checkIfMyFriend(user: User): boolean{
-        for(let i=0; i<this.myFriends.length; i++) {
-            if(this.myFriends[i].username === user.username) {
-              return true;
+        for(let i=0; i<this.myFriends.length; i++){
+            if(this.myFriends[i].username === user.username){
+                return true;
             }
         }
-      
         return false;
     }
 
     getUser(username: string): User{
-        for(let i=0; i<this.applicationUsers.length; i++){
+        for(let i=0; i< this.applicationUsers.length; i++){
             if(this.applicationUsers[i].username === username){
                 return this.applicationUsers[i];
             }
@@ -77,23 +107,32 @@ export class UserService {
         return null;
     }
 
-    getFriendsOf(username: string): User[]{
-        let retVal = [];
-        for(let i=0; i<this.applicationUsers.length; i++){
-            if(this.applicationUsers[i].username === username){
-                for(let j=0; j<this.applicationUsers[i].friends.length; j++){
-                    retVal.push(this.applicationUsers[i].friends[j]);
-                }
-            }else{
-                for(let j=0; j<this.applicationUsers[i].friends.length; j++){
-                    if(this.applicationUsers[i].friends[j].username === username){
-                        retVal.push(this.applicationUsers[i]);
-                    }
-                }
-            }
-        }
-
-        return retVal;
+	getCurrentLoggedUser(): User{
+		return this.me;
+	}
+	
+	setCurrentLoggedUser(username: string) {
+		this.me = this.getUser(username);
+		this.groupService.setCurrentGroup("");
+	}
+	
+	getFriend(): User{
+		return this.friend;
+	}
+	
+	setFriend(username: string){
+		this.friend = this.getUser(username);
+		this.groupService.setCurrentGroup("");
+	}
+	
+	getAllUsers(){
+        this.webSocketService.createUserMessage(null, null, "USERS", (data) => {
+            this.applicationUsers = JSON.parse(data);
+        });
     }
-
+    
+    setCurrentGroup(name: string){
+        this.groupService.setCurrentGroup(name);
+		this.setFriend("");
+    }
 }

@@ -16,13 +16,13 @@
                         -
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonMinus" [ngClass]="{ show: minusOpen }">
-                        <a class="dropdown-item" *ngFor="let user of groupService.currentGroup.members" (click)="removeUser(user)">{{user.username}}</a>
+                        <a class="dropdown-item" *ngFor="let user of groupService.getCurrentGroup().members" (click)="removeUser(user)">{{user.username}}</a>
                     </div>
                 </div>
             </div>
         </div>
         <hr />
-        <div class="card-text" [innerHTML]="renderMessages()">
+        <div class="card-text" [innerHTML]="this.messageService.content">
         </div>
     </div>
 </div>

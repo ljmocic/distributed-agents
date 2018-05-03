@@ -29,6 +29,11 @@ public class GroupResourceProxy implements GroupResourceInterface {
 	public Group findGroup(String name) {
 		return groupServiceProxy.getRest().findGroup(name);
 	}
+	
+	@Override
+	public List<Group> getGroupsOfUser(String username) {
+		return groupServiceProxy.getRest().getGroupsOfUser(username);
+	}
 
 	@Override
 	public Group createGroup(Group g) {

@@ -16,4 +16,5 @@ public interface GroupServiceLocal {
 	void removeUserFromGroup(String username, String name);
 	Group getGroupByName(String name);
 	List<Group> getGroups();
+	List<Group> getGroupsOfUser(String username);
 }

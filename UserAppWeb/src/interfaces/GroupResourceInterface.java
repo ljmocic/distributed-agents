@@ -46,5 +46,10 @@ public interface GroupResourceInterface {
 	@DELETE
 	@Path("/{name}/users/{username}")
 	public void removeFromGroup(@PathParam(value="name") String name, @PathParam(value="username") String username);
+	
+	@GET
+	@Path("/user/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Group> getGroupsOfUser(@PathParam(value="username") String username);
 
 }

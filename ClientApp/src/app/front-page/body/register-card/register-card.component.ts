@@ -19,8 +19,7 @@ export class RegisterCardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private userService: UserService,
-    private groupService: GroupService
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -45,8 +44,6 @@ export class RegisterCardComponent implements OnInit {
     }
 
     this.userService.createUser(this.user);
-    this.groupService.myGroups = [];
-    this.router.navigate(['/messages']);
   }
 
 }
