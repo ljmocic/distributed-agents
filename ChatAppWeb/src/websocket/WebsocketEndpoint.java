@@ -312,6 +312,7 @@ public class WebsocketEndpoint {
 							List<User> receivers = new ArrayList<User>();
 							receivers.add(new User(messageCommand.getUserToMessage(), ""));
 							m.setReceivers(receivers);
+							m.setGroup(null);
 							m.setContent(messageCommand.getMessage());
 							messageService.getRest().createMessage(m);
 							try {
@@ -329,6 +330,7 @@ public class WebsocketEndpoint {
 							System.out.println(messageCommand.getGroupToMessage());
 							Group groupToMessage = groupService.getRest().findGroup(messageCommand.getGroupToMessage());
 							m.setReceivers(groupToMessage.getMembers());
+							m.setGroup(groupToMessage);
 							m.setContent(messageCommand.getMessage());
 							messageService.getRest().createMessage(m);
 							try {

@@ -48,7 +48,7 @@ export class UserService {
             this.webSocketService.myGroups = [];
             this.groupService.setCurrentGroup("");
             this.webSocketService.updateUsers();
-            this.router.navigate(["/messages"]);
+            this.router.navigate(["/messages/friends"]);
         });
     }
 

@@ -51,10 +51,19 @@ public class MessageService implements MessageServiceLocal {
 		User sender = userService.getUserByUsername(message.getSender().getUsername());
 		List<User> recs = new ArrayList<User>();
 		
-		for(User uu: message.getReceivers()) {
-			recs.add(userService.getUserByUsername(uu.getUsername()));
-		}
+		if(message.getGroup()!=null) {
+			Group group = groupService.getGroupByName(message.getGroup().getName());
 		
+			for(User uu: group.getMembers()) {
+				recs.add(userService.getUserByUsername(uu.getUsername()));
+			}
+
+			message.setGroup(group);
+		}else {
+			for(User uu: message.getReceivers()) {
+				recs.add(userService.getUserByUsername(uu.getUsername()));
+			}
+		}
 		
 		message.setSender(sender);
 		message.setReceivers(recs);
@@ -106,34 +115,12 @@ public class MessageService implements MessageServiceLocal {
 		List<Message> allMessages = datastore.createQuery(Message.class).asList();
 		
 		Group g = groupService.getGroupByName(groupName);
-		List<User> members = g.getMembers();
 		
 		List<Message> groupMessages = new ArrayList<>();
 		
-		for(Message m: allMessages) {
-			List<User> receivers = m.getReceivers();
-			receivers.add(m.getSender());
-			boolean flag = false;
-			
-			for(User u: members) {
-				if(!receivers.contains(u)) {
-					flag = true;
-					break;
-				}
-			}
-			
-			if(!flag) {
-				
-				int count = 0;
-				for(User uuu: receivers) {
-					if(uuu.getUsername().equals(m.getSender().getUsername())) {
-						count ++;
-					}
-				}
-				
-				if(count > 1) {
-					groupMessages.add(m);
-				}
+		for(Message message: allMessages) {
+			if(message.getGroup()!= null && message.getGroup().getName().equals(g.getName())) {
+				groupMessages.add(message);
 			}
 		}
 		

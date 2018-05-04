@@ -85,7 +85,7 @@ export class GroupService{
 	}*/
 
 	setCurrentGroup(name: string){
-        alert("setting curr group "+name);
+        console.log("setting curr group "+name);
         if(name === "" || name === null){
             this.webSocketService.currentGroup = null;
         }else{

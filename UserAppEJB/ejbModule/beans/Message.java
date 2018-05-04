@@ -21,6 +21,9 @@ public class Message {
 	private String content;
 	
 	@Reference
+	private Group group;
+	
+	@Reference
 	private User sender;
 
 	@Reference
@@ -31,10 +34,11 @@ public class Message {
 		this.timestamp = LocalDateTime.now().toString();
 	}
 	
-	public Message(User sender, String content) {
+	public Message(User sender, String content, Group group) {
 		super();
 		this.id = new ObjectId();
 		this.sender = sender;
+		this.group = group;
 		this.receivers = new ArrayList<User>();
 		this.timestamp = LocalDateTime.now().toString();
 		this.content = content;
@@ -79,5 +83,15 @@ public class Message {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
+	public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
+	}
+	
+	
 	
 }
