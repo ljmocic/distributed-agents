@@ -30,22 +30,17 @@ export class ChatMessagesComponent implements OnInit {
   }
 
   getTitle(): String{
-    if (this.groupService.getCurrentGroup() !== null && this.userService.getFriend() === null){
-      return this.groupService.getCurrentGroup().name;
-    }else if (this.groupService.getCurrentGroup() === null && this.userService.getFriend() !== null){
-      return this.userService.getFriend().username;
+    if (this.groupService.webSocketService.currentGroup !== null && this.userService.webSocketService.friend === null){
+      return this.groupService.webSocketService.currentGroup.name;
+    }else if (this.groupService.webSocketService.currentGroup === null && this.userService.webSocketService.friend !== null){
+      return this.userService.webSocketService.friend.username;
     }
 
     return "";
   }
 
   getMessages() {
-    if(this.groupService.getCurrentGroup() !== null && this.userService.getFriend() === null){
-        this.messageService.getMessagesFromGroup(this.groupService.getCurrentGroup());
-    }else if (this.groupService.getCurrentGroup() === null && this.userService.getFriend() !== null){
-        this.messageService.getMessagesFromUserToUser(this.userService.getCurrentLoggedUser(), this.userService.getFriend());
-    }
-  
+    this.messageService.getMessages();
   }
 
   openDropdownPlus() {
@@ -67,16 +62,16 @@ export class ChatMessagesComponent implements OnInit {
   }
 
   checkAuthority(){
-    if(this.groupService.getCurrentGroup() === null){
+    if(this.groupService.webSocketService.currentGroup === null){
       return false;
     }
 
-    if(this.groupService.getCurrentGroup().admin === null || this.groupService.getCurrentGroup().admin === undefined){
+    if(this.groupService.webSocketService.currentGroup.admin === null || this.groupService.webSocketService.currentGroup.admin === undefined){
       return false;
     }
 
-    if(this.userService.getCurrentLoggedUser() !== null){
-      return this.groupService.getCurrentGroup().admin.username === this.userService.getCurrentLoggedUser().username;
+    if(this.userService.webSocketService.me !== null){
+      return this.groupService.webSocketService.currentGroup.admin.username === this.userService.webSocketService.me.username;
     }
 
     return false;

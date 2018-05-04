@@ -9,6 +9,6 @@ public interface NodeServiceLocal {
 	
 	void activateNode(Host host);
 	void deactivateNode(String alias);
-	void notifyNodes();
+	void notifyNodes(String message);
 
 }

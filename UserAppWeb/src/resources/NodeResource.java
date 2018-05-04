@@ -46,7 +46,7 @@ public class NodeResource {
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String notifyNodes() {
-		nodeService.notifyNodes();
+		nodeService.notifyNodes("blbl");
 		return "Nodes notified!";
 	}
 

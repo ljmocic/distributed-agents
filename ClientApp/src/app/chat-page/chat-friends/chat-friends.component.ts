@@ -14,8 +14,7 @@ export class ChatFriendsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userService.getMyFriends();
-    this.userService.getAllUsers();
+    //this.userService.webSocketService.updateEveryone();
   }
 
   addFriend(user: User){

@@ -31,7 +31,7 @@ public class SynchronizationService implements SynchronizationServiceLocal {
 		System.out.println("Dobio obavestenje o sinhr od cvora "+h.getAlias());
 		activeUsers.put(h.getAlias(), activeUsersFromNode);
 		printActiveUsers();
-		nodeService.notifyNodes();
+		nodeService.notifyNodes("nodes");
 	}
 
 	private void printActiveUsers() {

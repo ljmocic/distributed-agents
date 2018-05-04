@@ -29,7 +29,7 @@ export class ChatHeaderComponent implements OnInit {
     this.name = "";
     this.newGroupOpen = false;
     this.groupError = false;
-    this.messageService.content = "";
+    this.messageService.webSocketService.content = "";
   }
 
   createGroup(){
@@ -42,7 +42,7 @@ export class ChatHeaderComponent implements OnInit {
       return;
     }
 
-    this.groupService.createNewGroup(this.name, this.userService.getCurrentLoggedUser());
+    this.groupService.createNewGroup(this.name, this.userService.webSocketService.me);
     this.newGroupOpen = false;
   }
 

@@ -7,65 +7,50 @@ import { WebSocketService } from "./web-socket.service";
 @Injectable()
 export class GroupService{
 
-    public currentGroup: Group;
-    public myGroups: Group[];
-
     constructor(
-        private webSocketService: WebSocketService
+        public webSocketService: WebSocketService
 	) {
-        this.myGroups = [];
-        this.currentGroup=null;
     }
 
     createNewGroup(name: string, admin: User) {
         this.webSocketService.createGroupMessage(name, [admin.username], admin.username, 'CREATE', (data) => {
-            alert('group created');
-            this.webSocketService.createGroupMessage(null, [], admin.username, 'GETGROUPSOFUSER', (data) => {
-                alert('synced groups');
-                this.myGroups = JSON.parse(data);
-            });
+            console.log('group created');
+            //this.webSocketService.updateGroups();
         });
     }
 
     addMember(user: User){
-        if(!this.checkIfInGroup(user.username, this.currentGroup.name)){
-            this.currentGroup.members.push(user);
+        if(!this.checkIfInGroup(user.username, this.webSocketService.currentGroup.name)){
+            this.webSocketService.currentGroup.members.push(user);
             let names = [];
-            for(let i=0; i<this.currentGroup.members.length; i++){
-                names.push(this.currentGroup.members[i].username);
+            for(let i=0; i<this.webSocketService.currentGroup.members.length; i++){
+                names.push(this.webSocketService.currentGroup.members[i].username);
             }
 
-            this.webSocketService.createGroupMessage(this.currentGroup.name, names, this.currentGroup.admin.username, 'UPDATEMEMBERS', (data) => {
-                this.loadUserGroups(this.currentGroup.admin.username);
+            this.webSocketService.createGroupMessage(this.webSocketService.currentGroup.name, names, this.webSocketService.currentGroup.admin.username, 'UPDATEMEMBERS', (data) => {
+                //this.webSocketService.updateGroups();
             });
         }
     }
 
     removeMember(user: User){
-        if(this.checkIfInGroup(user.username, this.currentGroup.name)){
-            this.currentGroup.members.splice(this.findIndexOfUser(user.username), 1);
+        if(this.checkIfInGroup(user.username, this.webSocketService.currentGroup.name)){
+            this.webSocketService.currentGroup.members.splice(this.findIndexOfUser(user.username), 1);
             let names = [];
-            for(let i=0; i<this.currentGroup.members.length; i++){
-                names.push(this.currentGroup.members[i].username);
+            for(let i=0; i<this.webSocketService.currentGroup.members.length; i++){
+                names.push(this.webSocketService.currentGroup.members[i].username);
             }
 
-            this.webSocketService.createGroupMessage(this.currentGroup.name, names, this.currentGroup.admin.username, 'UPDATEMEMBERS', (data) => {
-                this.loadUserGroups(this.currentGroup.admin.username);
+            this.webSocketService.createGroupMessage(this.webSocketService.currentGroup.name, names, this.webSocketService.currentGroup.admin.username, 'UPDATEMEMBERS', (data) => {
+                //this.webSocketService.updateGroups();
             });
         }
 	}
 
-    loadUserGroups(username: string){
-        alert("loading groups for: "+username);
-        this.webSocketService.createGroupMessage(null, [], username, 'GETGROUPSOFUSER', (data) => {
-            this.myGroups = JSON.parse(data);
-        });
-    }
-
     getGroup(name: string): Group{
-        for(let i=0; i<this.myGroups.length; i++){
-            if(this.myGroups[i].name === name){
-                return this.myGroups[i];
+        for(let i=0; i<this.webSocketService.myGroups.length; i++){
+            if(this.webSocketService.myGroups[i].name === name){
+                return this.webSocketService.myGroups[i];
             }
         }
 
@@ -86,8 +71,8 @@ export class GroupService{
     }
 
     findIndexOfUser(username: string): number{
-        for(let i=0; i<this.currentGroup.members.length; i++){
-            if(this.currentGroup.members[i].username === username){
+        for(let i=0; i<this.webSocketService.currentGroup.members.length; i++){
+            if(this.webSocketService.currentGroup.members[i].username === username){
                 return i;
             }
         }
@@ -95,16 +80,16 @@ export class GroupService{
         return -1;
     }
 	
-	getCurrentGroup(): Group{
-		return this.currentGroup;
-	}
+	/*getCurrentGroup(): Group{
+		return this.updateService.currentGroup;
+	}*/
 
 	setCurrentGroup(name: string){
         alert("setting curr group "+name);
         if(name === "" || name === null){
-            this.currentGroup = null;
+            this.webSocketService.currentGroup = null;
         }else{
-		    this.currentGroup = this.getGroup(name);
+		    this.webSocketService.currentGroup = this.getGroup(name);
         }
 	}
 }

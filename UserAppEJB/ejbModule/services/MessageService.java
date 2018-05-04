@@ -32,6 +32,9 @@ public class MessageService implements MessageServiceLocal {
 	@EJB
 	UserServiceLocal userService;
 	
+	@EJB
+	private NodeService nodeService;
+	
     public MessageService() {
     	Morphia morphia = new Morphia();
 		datastore = morphia.createDatastore(new MongoClient(), "userappdb");
@@ -57,6 +60,8 @@ public class MessageService implements MessageServiceLocal {
 		message.setReceivers(recs);
 		
 		Key<beans.Message> key = datastore.save(message);
+		
+		nodeService.notifyNodes("messages");
 		return datastore.get(Message.class, key);
 	}
 

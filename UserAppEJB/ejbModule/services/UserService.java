@@ -2,6 +2,7 @@ package services;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
@@ -16,6 +17,9 @@ import interfaces.UserServiceLocal;
 @Stateless(mappedName = "UserService")
 @LocalBean
 public class UserService implements UserServiceLocal {
+	
+	@EJB
+	private NodeService nodeService;
 	
 	private Datastore datastore;
 
@@ -34,6 +38,7 @@ public class UserService implements UserServiceLocal {
 	public User createUser(User user) {
 		System.out.println(user.getFriends());
 		datastore.save(user);
+		nodeService.notifyNodes("users");
 		return getUserByUsername(user.getUsername());
 	}
 	

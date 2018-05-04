@@ -46,11 +46,11 @@ public class NodeService implements NodeServiceLocal {
 	}
 	
 	@Override
-	public void notifyNodes() {
+	public void notifyNodes(String message) {
 		for (Host h : nodes) {
 			ResteasyClient client = new ResteasyClientBuilder().build();
 	        ResteasyWebTarget target = client.target("http://" + h.getAddress() + ":8080/ChatAppWeb/rest/sync/notify");
-	        target.request(MediaType.TEXT_PLAIN).get();
+	        target.path(message).request(MediaType.TEXT_PLAIN).get();
 		}
 		
 	}

@@ -25,25 +25,25 @@ export class ChatOnlineComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.query = "search for friends ...";
+    this.query = "";
     this.updateData();
   }
 
   updateData(){
-    this.viewFriends = this.userService.myFriends;
-    this.viewGroups = this.groupService.myGroups;
+    this.viewFriends = this.userService.webSocketService.myFriends;
+    this.viewGroups = this.groupService.webSocketService.myGroups;
   }
 
   searchFor(){
     this.viewFriends = [];
-    let myFriends = this.userService.myFriends;
+    let myFriends = this.userService.webSocketService.myFriends;
     for (let i=0; i<myFriends.length; i++) {
       if (myFriends[i].username.indexOf(this.query) > -1) {
         this.viewFriends.push(myFriends[i]);
       }
     }
     this.viewGroups = [];
-    let myGroups = this.groupService.myGroups;
+    let myGroups = this.groupService.webSocketService.myGroups;
     for (let i=0; i<myGroups.length; i++) {
       if (myGroups[i].name.indexOf(this.query) > -1) {
         this.viewGroups.push(myGroups[i]);
@@ -54,14 +54,14 @@ export class ChatOnlineComponent implements OnInit {
   getMessagesFromUser(username: string){
     //alert("Daj poruke od "+username);
     this.userService.setFriend(username);
-    this.messageService.getMessagesFromUserToUser(this.userService.me, this.userService.getFriend());
+    this.messageService.getMessages();
     this.router.navigate(['./messages']);
   }
 
   getMessagesFromGroup(group: string){
     //alert("Daj poruke od "+group);
     this.userService.setCurrentGroup(group);
-    this.messageService.getMessagesFromGroup(this.groupService.currentGroup);
+    this.messageService.getMessages();
     this.router.navigate(['./messages']);
   }
 

@@ -32,7 +32,7 @@ export class ChatMessageComponent implements OnInit {
       }
     }
 
-    this.messageService.sendMessage(this.content, this.userService.getCurrentLoggedUser());
+    this.messageService.sendMessage(this.content, this.userService.webSocketService.me);
     this.content = "";
   }
 

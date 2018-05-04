@@ -45,7 +45,7 @@ public class GroupService implements GroupServiceLocal {
 	@Override
 	public Group createGroup(Group group) {
 		datastore.save(group);
-		nodeService.notifyNodes();
+		nodeService.notifyNodes("groups");
 		return getGroupByName(group.getName());
 	}
 
