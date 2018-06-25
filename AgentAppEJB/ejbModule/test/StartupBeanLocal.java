@@ -5,5 +5,5 @@ import javax.ejb.Local;
 @Local
 public interface StartupBeanLocal {
 
-	public void greeting();
+	public void greeting() throws Exception;
 }

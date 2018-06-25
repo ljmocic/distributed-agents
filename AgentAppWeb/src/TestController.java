@@ -15,6 +15,12 @@ public class TestController {
 	@GET
 	public void greetNMeet() {
 		System.out.println("Hi again");
-		startupBeanLocal.greeting();
+		try {
+			startupBeanLocal.greeting();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			//Uvek ce baciti, zato je zakomentarisano
+		}
 	}
 }
