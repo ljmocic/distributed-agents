@@ -40,7 +40,7 @@ public class StartupBean implements StartupBeanLocal {
 		c.start();
 		
 		MessageConsumer consumer = s.createConsumer(q);
-		consumer.setMessageListener(new MDBConsumer());
+		consumer.setMessageListener(new MDBConsumerTest());
 		TextMessage msg = s.createTextMessage("Queue message!");
 		long sent = System.currentTimeMillis();
 		msg.setLongProperty("sent", sent);

@@ -15,12 +15,12 @@ import javax.jms.TextMessage;
 				propertyName = "destinationType", propertyValue = "javax.jms.Queue")
 		}, 
 		mappedName = "AgentMessages")
-public class MDBConsumer implements MessageListener {
+public class MDBConsumerTest implements MessageListener {
 
     /**
      * Default constructor. 
      */
-    public MDBConsumer() {
+    public MDBConsumerTest() {
         // TODO Auto-generated constructor stub
     }
 	
