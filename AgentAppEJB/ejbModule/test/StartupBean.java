@@ -1,6 +1,7 @@
 package test;
 
 import javax.annotation.Resource;
+import javax.ejb.Startup;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -16,6 +17,7 @@ import javax.naming.InitialContext;
  * Session Bean implementation class StartupBean
  */
 @Stateless
+@Startup
 public class StartupBean implements StartupBeanLocal {
 
     /**

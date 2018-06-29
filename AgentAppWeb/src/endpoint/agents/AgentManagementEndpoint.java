@@ -1,4 +1,4 @@
-package endpoint.agent_center;
+package endpoint.agents;
 
 import java.util.Collection;
 

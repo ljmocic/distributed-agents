@@ -29,5 +29,22 @@ public class AgentCenter {
 		this.address = address;
 	}
 	
+	@Override
+	public String toString() {
+		return "AgentCenter[alias="+alias+", address="+address+"]";
+	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof AgentCenter)) {
+			return false;
+		}
+		
+		AgentCenter ac = (AgentCenter)o;
+		if(this.address.equals(ac.getAddress()) && this.alias.equals(ac.getAlias())) {
+			return true;
+		}
+		
+		return false;
+	}
 }
