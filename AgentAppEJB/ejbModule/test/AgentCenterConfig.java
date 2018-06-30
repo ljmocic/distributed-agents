@@ -28,7 +28,7 @@ public class AgentCenterConfig {
 			masterAddress = null;
 			nodeName = "master";
 			try {
-				nodeAddress = InetAddress.getLocalHost().getHostName();
+				nodeAddress = InetAddress.getLocalHost().getHostAddress();
 			}catch(Exception ee) {
 				nodeAddress = "127.0.0.1";
 			}

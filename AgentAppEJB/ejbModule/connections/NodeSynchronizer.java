@@ -5,15 +5,15 @@ import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.naming.NamingException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-
+import agents.types.AgentTypeManagerLocal;
 import model.AgentCenter;
 import test.AgentCenterConfig;
+import utils.HandshakeMessage;
+import utils.ResteasyClientFactory;
 
 /**
  * Session Bean implementation class NodeSynchronizer
@@ -24,6 +24,9 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
 
     @EJB
     ConnectionManagerLocal connectionManager;
+    
+    @EJB
+    AgentTypeManagerLocal agentTypeManager;
 	
     public NodeSynchronizer() {
         // TODO Auto-generated constructor stub
@@ -32,18 +35,30 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
     @Override
     @PostConstruct
 	public void setupNode() {
+    	HandshakeMessage message = new HandshakeMessage();
+    	
     	System.out.println("Node up: "+AgentCenterConfig.nodeName);
     	AgentCenter ac = new AgentCenter();
 		ac.setAlias(AgentCenterConfig.nodeName);
 		ac.setAddress("http://"+AgentCenterConfig.nodeAddress+":"+AgentCenterConfig.nodePort);
+		message.getAgentCenters().put(ac.getAlias(), ac);
+		
+		try {
+			message.getAgentTypes().put(ac.getAlias(), agentTypeManager.getAgentTypesOnNode());
+		}catch(NamingException e) {
+			return;
+		}
+		
+		System.out.println(message);
 		
 		if(AgentCenterConfig.masterAddress != null) {
-			Entity<AgentCenter> request = Entity.entity(ac, MediaType.APPLICATION_JSON);
-			ResteasyClient client = new ResteasyClientBuilder().build();
-	        ResteasyWebTarget target = client.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node");
-	        target.request(MediaType.APPLICATION_JSON).post(request);
+			Entity<HandshakeMessage> request = Entity.entity(message, MediaType.APPLICATION_JSON);
+	        ResteasyClientFactory.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node")
+	        	.request(MediaType.APPLICATION_JSON).post(request);
 		}else {
+			System.out.println("master");
 			connectionManager.addNode(ac);
+			agentTypeManager.addTypesFromNode(ac.getAlias(), message.getAgentTypes().get(ac.getAlias()));
 		}
 	}
     
@@ -52,11 +67,12 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
     public void removeNode() {
     	System.out.println("Node down: "+AgentCenterConfig.nodeName);
 		if(AgentCenterConfig.masterAddress != null) {
-	    	ResteasyClient client = new ResteasyClientBuilder().build();
-	        ResteasyWebTarget target = client.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node/"+AgentCenterConfig.nodeName);
-	        target.request().delete();
+	    	ResteasyClientFactory.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node/"+AgentCenterConfig.nodeName)
+	    		.request().delete();
 		}else {
+			System.out.println("master");
 			connectionManager.removeNode(AgentCenterConfig.nodeName);
+			agentTypeManager.removeTypesFromNode(AgentCenterConfig.nodeName);
 		}
     }
 }

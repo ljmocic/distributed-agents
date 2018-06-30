@@ -1,13 +1,19 @@
 package model;
 
-public class AgentType {
+import java.io.Serializable;
 
+public class AgentType implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String name;
-	private Object module;
+	private String module;
 	
 	public AgentType() {}
 
-	public AgentType(String name, Object module) {
+	public AgentType(String name, String module) {
 		super();
 		this.name = name;
 		this.module = module;
@@ -21,12 +27,30 @@ public class AgentType {
 		this.name = name;
 	}
 
-	public Object getModule() {
+	public String getModule() {
 		return module;
 	}
 
-	public void setModule(Object module) {
+	public void setModule(String module) {
 		this.module = module;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof AgentType)) {
+			return false;
+		}
+		
+		AgentType a = (AgentType)o;
+		if(a.getName().equals(name) && a.getModule().equals(module)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return module+" : "+name;
+	}
 }

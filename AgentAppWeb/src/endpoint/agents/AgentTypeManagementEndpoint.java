@@ -1,14 +1,13 @@
 package endpoint.agents;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.naming.NamingException;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -31,19 +30,19 @@ public class AgentTypeManagementEndpoint implements AgentTypeManagementEndpointL
 		try {
 			return agentManager.getAgentTypesOnNode();
 		}catch(NamingException e) {
-			//
+			e.printStackTrace();
 		}
 		
 		return null;
 	}
-	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
+
+	@GET
+	@Path("/system")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Object sendAgentTypes(Collection<AgentType> agentTypes) {
-		//TODO receive types from slave
-		//JNDI lookup u lokalnoj bazi
-		return null;
+	@Override
+	public HashMap<String, Collection<AgentType>> getAllAgentTypes() {
+		return agentManager.getAgentTypesOnSystem();
 	}
+	
 	
 }
