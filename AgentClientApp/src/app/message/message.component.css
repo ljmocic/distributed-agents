@@ -1,0 +1,11 @@
+.card-body{
+    overflow-y:auto;
+    height: 100%;
+    padding-top: 0;
+}
+
+.card{
+    overflow-y:auto;
+    height: 100%;
+    padding-top: 0;
+}

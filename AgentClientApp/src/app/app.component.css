@@ -1,0 +1,19 @@
+.container-fluid{
+    padding-top: 1rem;
+}
+
+.row{
+    height: 38rem;
+    padding-top: 0;
+
+}
+
+.col{
+    height: 38rem;
+    padding-top: 0;
+}
+
+.col-5{
+    padding-left: 0;
+    padding-right: 0;
+}

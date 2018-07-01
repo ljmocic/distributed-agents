@@ -1,0 +1,60 @@
+<div class="card">
+  <div class="card-header bg-info text-light d-flex justify-content-between">
+    <i class="fa fa-2x fa-envelope"></i>
+    <h4><b>New message</b></h4>
+  </div>
+  <div class="card-body">
+    <form class="form">
+      <br />
+      <div class="form-group">
+        <label class="form-label" for="performative" required>Performative</label>
+        <select class="form-control" id="performative">
+          <option value="Value1">Value1</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="sender" required>Sender</label>
+        <input type="text" class="form-control" id="sender" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="receivers" required>Receivers</label>
+        <textarea class="form-control" id="receivers"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="content" required>Content</label>
+        <textarea class="form-control form-control-lg" id="content"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="language">Language</label>
+        <input type="text" class="form-control" id="language" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="encoding">Encoding</label>
+        <input type="text" class="form-control" id="encoding" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ontology">Ontology</label>
+        <input type="text" class="form-control" id="ontology" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="convId">Conversation ID</label>
+        <input type="text" class="form-control" id="convId" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="replyWith">Reply with</label>
+        <input type="text" class="form-control" id="replyWith" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inReplyTo">In reply to</label>
+        <input type="text" class="form-control" id="inReplyTo" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="replyBy">Reply by</label>
+        <input type="text" class="form-control" id="replyBy" />
+      </div>
+      <div class="form-group mb-0">
+        <button class="btn btn-info w-100 btn-lg d-flex justify-content-between"><i class="mt-1 fa fa-send fa-lg"></i><b>Send</b></button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+.card-body{
+    overflow-y:auto;
+    height: 49%;
+    padding-top: 0;
+}
+
+.card{
+    overflow-y:auto;
+    height: 49%;
+    margin-top: .4rem;
+}
