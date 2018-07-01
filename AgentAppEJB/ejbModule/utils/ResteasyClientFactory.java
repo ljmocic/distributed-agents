@@ -6,12 +6,9 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 public class ResteasyClientFactory {
 
-	private static ResteasyClient client;
-	static {
-		client = new ResteasyClientBuilder().build();
-	}
 	
 	public static ResteasyWebTarget target(String targetURL) {
+		ResteasyClient client = new ResteasyClientBuilder().build();
 		return client.target(targetURL);
 	}
 }

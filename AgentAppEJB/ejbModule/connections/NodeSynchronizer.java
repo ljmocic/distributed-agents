@@ -8,6 +8,7 @@ import javax.ejb.Startup;
 import javax.naming.NamingException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import agents.types.AgentTypeManagerLocal;
 import model.AgentCenter;
@@ -53,10 +54,13 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
 		
 		if(AgentCenterConfig.masterAddress != null) {
 			Entity<HandshakeMessage> request = Entity.entity(message, MediaType.APPLICATION_JSON);
-	        ResteasyClientFactory.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node")
+	        Response r = ResteasyClientFactory.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node")
 	        	.request(MediaType.APPLICATION_JSON).post(request);
+	        if(r != null) {
+	        	r.close();
+	        }
 		}else {
-			System.out.println("master");
+			System.out.println("The master has risen");
 			connectionManager.addNode(ac);
 			agentTypeManager.addTypesFromNode(ac.getAlias(), message.getAgentTypes().get(ac.getAlias()));
 		}
@@ -67,10 +71,13 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
     public void removeNode() {
     	System.out.println("Node down: "+AgentCenterConfig.nodeName);
 		if(AgentCenterConfig.masterAddress != null) {
-	    	ResteasyClientFactory.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node/"+AgentCenterConfig.nodeName)
+	    	Response r = ResteasyClientFactory.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node/"+AgentCenterConfig.nodeName)
 	    		.request().delete();
+	    	if(r != null) {
+	    		r.close();
+	    	}
 		}else {
-			System.out.println("master");
+			System.out.println("The master has fallen");
 			connectionManager.removeNode(AgentCenterConfig.nodeName);
 			agentTypeManager.removeTypesFromNode(AgentCenterConfig.nodeName);
 		}

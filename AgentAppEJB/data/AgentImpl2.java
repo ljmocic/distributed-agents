@@ -5,7 +5,7 @@ import javax.ejb.Stateful;
 
 @Stateful
 @Remote(AgentRemote.class)
-public class AgentImpl extends Agent{
+public class AgentImpl2 extends Agent{
 
 	/**
 	 * 
@@ -14,7 +14,8 @@ public class AgentImpl extends Agent{
 
 	@Override
 	public void handleMessage(ACLMessage message) {
-		System.out.println("fasfas");
+		// TODO Auto-generated method stub
+		
 	}
 
 }

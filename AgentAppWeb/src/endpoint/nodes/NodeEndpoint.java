@@ -14,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import agents.types.AgentTypeManagerLocal;
 import connections.ConnectionManagerLocal;
@@ -53,15 +54,20 @@ public class NodeEndpoint implements NodeEndpointLocal{
 		System.out.println("Node register request received :" + newNode);
 		
 		if(AgentCenterConfig.masterAddress == null && message.getAgentCenters().values().size() == 1) {
-			System.out.println("Master node registration");
-			if(connectionManager.addNode(newNode) && agentTypeManager.addTypesFromNode(newNode.getAlias(), message.getAgentTypes().get(newNode.getAlias()))) {
-				System.out.println("Node registered :"+newNode);
-				if(!doHandshakeProtocol(newNode)) {
+			System.out.println("Master, please register me! " + newNode);
+			boolean flagOne = connectionManager.addNode(newNode);
+			boolean flagTwo = agentTypeManager.addTypesFromNode(newNode.getAlias(), message.getAgentTypes().get(newNode.getAlias()));
+			System.out.println(flagOne + ", " + flagTwo);
+			if(flagOne && flagTwo) {
+				System.out.println("Master is pleased! " + newNode);
+				doHandshakeProtocol(newNode);
+				/*if(!doHandshakeProtocol(newNode)) {
 					doNodeRollback(newNode);
-				}
+				}*/
 			}
 		}else {
-			System.out.println("Regular node registration");
+			System.out.println("Meet your fellow bannerman!");
+			System.out.println(message);
 			if(AgentCenterConfig.masterAddress != null && message.getAgentCenters().values().size() > 0) {
 				for(String ac: message.getAgentCenters().keySet()) {
 					connectionManager.addNode(message.getAgentCenters().get(ac));
@@ -77,13 +83,16 @@ public class NodeEndpoint implements NodeEndpointLocal{
 		System.out.println("Node remove request received :"+alias);
 		if(connectionManager.removeNode(alias)) {
 			agentTypeManager.removeTypesFromNode(alias);
-			System.out.println("Node removed :"+alias);
+			System.out.println("Master, I have failed you ... "+alias);
 			if(AgentCenterConfig.masterAddress == null) {
 				for(AgentCenter ac: connectionManager.getAgentCenters()) {
 					if(!ac.getAlias().equals("master")) {
 						System.out.println("Node removal request sent to: "+ac.getAddress());
-						ResteasyClientFactory.target(ac.getAddress()+"/AgentAppWeb/rest/node/"+alias)
+						Response r = ResteasyClientFactory.target(ac.getAddress()+"/AgentAppWeb/rest/node/"+alias)
 							.request().delete();
+						if(r != null) {
+							r.close();
+						}
 					}
 				}
 			}
@@ -93,6 +102,7 @@ public class NodeEndpoint implements NodeEndpointLocal{
 	private boolean doHandshakeProtocol(AgentCenter newAgentCenter) {
 		try {
 			Collection<AgentCenter> centers = connectionManager.getAgentCenters();
+			System.out.println("These are my slaves");
 			for(AgentCenter ac: centers) {
 				sendMessageToOthers(ac, newAgentCenter);
 			}
@@ -103,8 +113,14 @@ public class NodeEndpoint implements NodeEndpointLocal{
 			}
 			message.setAgentTypes(agentTypeManager.getAgentTypesOnSystem());
 			
+			System.out.println("Welcome to the Round Table, slave");
+			System.out.println(message);
+			
 			Entity<HandshakeMessage> request = Entity.entity(message, MediaType.APPLICATION_JSON);
-			ResteasyClientFactory.target(newAgentCenter.getAddress()+"/AgentAppWeb/rest/node").request().post(request);
+			Response r = ResteasyClientFactory.target(newAgentCenter.getAddress()+"/AgentAppWeb/rest/node").request().post(request);
+			if(r != null) {
+				r.close();
+			}
 		}catch(Exception e) {
 			return false;
 		}
@@ -113,17 +129,23 @@ public class NodeEndpoint implements NodeEndpointLocal{
 	}
 	
 	private void sendMessageToOthers(AgentCenter ac, AgentCenter newAgent) throws Exception{
-		if(!ac.getAlias().equals(AgentCenterConfig.nodeAddress) && !ac.getAlias().equals(newAgent.getAlias())) {
+		System.out.println("Slave "+ac+", register "+newAgent);
+		if(!ac.getAlias().equals(AgentCenterConfig.nodeName) && !ac.getAlias().equals(newAgent.getAlias())) {
 			HandshakeMessage message = new HandshakeMessage();
 			message.getAgentCenters().put(newAgent.getAlias(), newAgent);
 			message.getAgentTypes().put(newAgent.getAlias(), agentTypeManager.getTypesFromCenter(newAgent.getAlias()));
 			
+			System.out.println("[message for "+ac+"]:");
+			System.out.println(message);
 			Entity<HandshakeMessage> request = Entity.entity(message, MediaType.APPLICATION_JSON);
-			ResteasyClientFactory.target(ac.getAddress()+"/AgentAppWeb/rest/node").request().post(request);
+			Response r = ResteasyClientFactory.target(ac.getAddress()+"/AgentAppWeb/rest/node").request().post(request);
+			if(r != null) {
+				r.close();
+			}
 		}
 	}
 	
-	private void doNodeRollback(AgentCenter newAgentCenter) {
+	/*private void doNodeRollback(AgentCenter newAgentCenter) {
 		
-	}
+	}*/
 }
