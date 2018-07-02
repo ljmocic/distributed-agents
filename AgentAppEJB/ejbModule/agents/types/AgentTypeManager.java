@@ -13,6 +13,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
 import model.AgentType;
+import test.AgentCenterConfig;
 import utils.JNDIUtils;
 
 /**
@@ -30,7 +31,7 @@ public class AgentTypeManager implements AgentTypeManagerLocal {
     }
     
     @PostConstruct
-	public void postConstruct() {
+	public void initMap() {
     	Hashtable<String, Object> jndiProps = new Hashtable<>();
 		jndiProps.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
     	jndiUtils = new JNDIUtils(jndiProps);
@@ -75,8 +76,12 @@ public class AgentTypeManager implements AgentTypeManagerLocal {
 	@Override
 	public void removeTypesFromNode(String center) {
 		System.out.println("removeTypesFromNode");
-		if(typesOnSystem.containsKey(center))
-			typesOnSystem.remove(center);
+		if(!center.equals(AgentCenterConfig.nodeName)) {
+			if(typesOnSystem.containsKey(center))
+				typesOnSystem.remove(center);
+		}else {
+			typesOnSystem = new HashMap<>();
+		}
 	}
 
 	@Override

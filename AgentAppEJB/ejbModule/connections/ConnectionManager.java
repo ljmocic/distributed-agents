@@ -8,6 +8,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import model.AgentCenter;
+import test.AgentCenterConfig;
 
 /**
  * Session Bean implementation class ConnectionManager
@@ -39,12 +40,17 @@ public class ConnectionManager implements ConnectionManagerLocal {
     @Override
     public boolean removeNode(String alias) {
     	System.out.println("remove node");
-    	if(agentCenters.containsKey(alias)) {
-    		agentCenters.remove(alias);
-    		return true;
+    	if(!alias.equals(AgentCenterConfig.nodeName)) {
+	    	if(agentCenters.containsKey(alias)) {
+	    		agentCenters.remove(alias);
+	    		return true;
+	    	}
+
+	    	return false;
     	}
     	
-    	return false;
+    	initMap();
+    	return true;
     }
     
     @Override
