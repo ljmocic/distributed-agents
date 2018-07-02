@@ -15,10 +15,10 @@ import model.AgentType;
 public class JNDIUtils {
 
 	private Hashtable<String, Object> jndiProperties;
-	private Context context;
+	private static Context context;
 	
-	private static final String INTF = "!" + AgentRemote.class.getName();
-	private static final String EXP = "java:jboss/exported/AgentApp";
+	private static final String INTERFACE = "!" + AgentRemote.class.getName();
+	private static final String EXPORTED = "java:jboss/exported/AgentApp";
 
 	public JNDIUtils() {}
 	
@@ -40,24 +40,24 @@ public class JNDIUtils {
 		this.jndiProperties = jndiProperties;
 	}
 
-	public Context getContext() {
+	public static Context getContext() {
 		return context;
 	}
 
-	public void setContext(Context context) {
-		this.context = context;
+	public static void setContext(Context context) {
+		JNDIUtils.context = context;
 	}
 	
 	public NamingEnumeration<NameClassPair> getModules() throws NamingException{
-		return context.list(EXP);
+		return context.list(EXPORTED);
 	}
 	
 	public NamingEnumeration<NameClassPair> getBeansFromModule(String module) throws NamingException{
-		return context.list(EXP + "/" + module);
+		return context.list(EXPORTED + "/" + module);
 	}
 	
 	public HashMap<String, AgentType> getBeansFromModule(String module, HashMap<String, AgentType> types) throws NamingException{
-		NamingEnumeration<NameClassPair> agentList = context.list(EXP + "/" + module);
+		NamingEnumeration<NameClassPair> agentList = context.list(EXPORTED + "/" + module);
 		while (agentList.hasMore()) {
 			String name = agentList.next().getName();
 			AgentType agType = parseNameIfValid(module, name);
@@ -70,7 +70,7 @@ public class JNDIUtils {
 	}
 	
 	private AgentType parseNameIfValid(String module, String name) {
-		if (name != null && name.endsWith(INTF)) {
+		if (name != null && name.endsWith(INTERFACE)) {
 			return new AgentType(name, module);
 		}
 		return null;

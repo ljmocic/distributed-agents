@@ -1,5 +1,6 @@
 package model;
 
+
 public interface AgentRemote {
 
 	public void handleMessage(ACLMessage message);

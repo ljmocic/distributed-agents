@@ -22,4 +22,6 @@ public interface AgentTypeManagerLocal {
 	public void removeTypesFromNode(String center);
 	
 	public Collection<AgentType> getTypesFromCenter(String center);
+
+	public AgentType getTypeWithName(String name);
 }

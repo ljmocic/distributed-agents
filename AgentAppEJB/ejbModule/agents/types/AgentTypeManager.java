@@ -88,4 +88,17 @@ public class AgentTypeManager implements AgentTypeManagerLocal {
 	public Collection<AgentType> getTypesFromCenter(String center){
 		return typesOnSystem.get(center);
 	}
+	
+	@Override
+	public AgentType getTypeWithName(String name) {
+		for(Collection<AgentType> coll: typesOnSystem.values()) {
+			for(AgentType type: coll) {
+				if(type.getName().equals(name)) {
+					return type;
+				}
+			}
+		}
+		
+		return null;
+	}
 }

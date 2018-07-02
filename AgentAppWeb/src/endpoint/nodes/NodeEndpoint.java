@@ -16,10 +16,12 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import agents.AgentManagerLocal;
 import agents.types.AgentTypeManagerLocal;
 import connections.ConnectionManagerLocal;
 import connections.NodeSynchronizerLocal;
 import model.AgentCenter;
+import model.AgentRemote;
 import test.AgentCenterConfig;
 import utils.HandshakeMessage;
 import utils.ResteasyClientFactory;
@@ -40,6 +42,9 @@ public class NodeEndpoint implements NodeEndpointLocal{
 	
 	@EJB
 	AgentTypeManagerLocal agentTypeManager;
+	
+	@EJB
+	AgentManagerLocal agentManager;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -153,6 +158,19 @@ public class NodeEndpoint implements NodeEndpointLocal{
 				return;
 			}
 		}
+		
+		System.out.println("These agents are running, remember that");
+		try {
+			Entity<Collection<AgentRemote>> runningAgents = Entity.entity(agentManager.getRunningAgents(), MediaType.APPLICATION_JSON);
+			Response r = ResteasyClientFactory.target(newAgentCenter.getAddress()+"/AgentAppWeb/rest/agents/running").request().post(runningAgents);
+			if(r != null) {
+				r.close();
+			}
+		}catch(Exception e) {
+			System.out.println("Timeout with "+newAgentCenter);
+			deactivateNode(newAgentCenter.getAlias());
+		}
+		
 	}
 	
 	private void sendMessageTo(AgentCenter sendTo, HandshakeMessage message) throws Exception{
