@@ -25,4 +25,18 @@ public abstract class Agent implements AgentRemote, Serializable {
 	public void setAID(AID id) {
 		this.id = id;
 	}
+    
+    @Override
+    public boolean equals(Object o) {
+    	if(!(o instanceof Agent)) {
+    		return false;
+    	}
+    	
+    	if(((Agent) o).getAID().equals(id)) {
+    		return true;
+    	}
+    	
+    	return false;
+    }
+
 }

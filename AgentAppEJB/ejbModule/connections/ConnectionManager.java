@@ -8,7 +8,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import model.AgentCenter;
-import test.AgentCenterConfig;
+import utils.AgentCenterConfig;
 
 /**
  * Session Bean implementation class ConnectionManager

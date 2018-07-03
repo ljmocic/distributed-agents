@@ -14,7 +14,7 @@ import model.AID;
 import model.AgentCenter;
 import model.AgentRemote;
 import model.AgentType;
-import test.AgentCenterConfig;
+import utils.AgentCenterConfig;
 import utils.JNDIUtils;
 
 /**
@@ -50,8 +50,10 @@ public class AgentManager implements AgentManagerLocal {
 		AgentCenter host = connectionManager.getAgentCenter(AgentCenterConfig.nodeName);
 		
 		AID aid = new AID(name, host, type);
-		if(runningAgents.containsKey(aid)) {
-			return null;
+		for(AID dd: runningAgents.keySet()) {
+			if(dd.equals(aid)) {
+				return null;
+			}
 		}
 		
 		System.out.println(aid);
@@ -76,8 +78,11 @@ public class AgentManager implements AgentManagerLocal {
 
 	@Override
 	public void removeAgent(AID aid) {
-		if(runningAgents.containsKey(aid)) {
-			runningAgents.remove(aid);
+		System.out.println(aid);
+		for(AID aidd: runningAgents.keySet()) {
+			if(aidd.equals(aid)) {
+				runningAgents.remove(aidd);
+			}
 		}
 	}
 
@@ -94,6 +99,8 @@ public class AgentManager implements AgentManagerLocal {
 	@Override
 	public void syncAgents(AgentCenter center, Collection<AgentRemote> agents) {
 		
+		System.out.println("Syncing");
+		
 		for(AID aid: runningAgents.keySet()) {
 			if(aid.getHost().equals(center)) {
 				runningAgents.remove(aid);
@@ -101,6 +108,7 @@ public class AgentManager implements AgentManagerLocal {
 		}
 		
 		for(AgentRemote agent: agents) {
+			System.out.println("Synced " + agent.getAID());
 			runningAgents.put(agent.getAID(), agent);
 		}
 	}

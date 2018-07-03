@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 
 import agents.types.AgentTypeManagerLocal;
 import model.AgentCenter;
-import test.AgentCenterConfig;
+import utils.AgentCenterConfig;
 import utils.HandshakeMessage;
 import utils.ResteasyClientFactory;
 

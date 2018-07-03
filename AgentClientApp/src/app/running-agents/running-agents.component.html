@@ -5,9 +5,9 @@
     </div>
     <div class="card-body">
       <div class="list-group-flush">
-        <div *ngFor="let i of nums" class="list-group-item">
+        <div *ngFor="let agent of runningAgents" class="list-group-item">
           <div class="d-flex justify-content-between">
-            Type{{i}}
+             {{agent}}
             <button class="btn btn-danger btn-sm">&nbsp;<i class="fa fa-stop fa-sm"></i>&nbsp;</button>
           </div>
         </div>

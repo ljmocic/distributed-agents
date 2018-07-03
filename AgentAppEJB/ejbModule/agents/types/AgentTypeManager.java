@@ -13,7 +13,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
 import model.AgentType;
-import test.AgentCenterConfig;
+import utils.AgentCenterConfig;
 import utils.JNDIUtils;
 
 /**

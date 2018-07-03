@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AgentsService } from '../services/agents.service';
 
 @Component({
   selector: 'app-running-agents',
@@ -7,14 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RunningAgentsComponent implements OnInit {
 
-  nums: number[]
-  limit = 25; 
+  runningAgents: any[]
 
-  constructor() { 
-    this.nums = [];
-    for(let i=0; i<this.limit; i++){
-      this.nums.push(i+1);
-    }
+  constructor(
+    agentsService: AgentsService
+  ) { 
   }
 
   ngOnInit() {

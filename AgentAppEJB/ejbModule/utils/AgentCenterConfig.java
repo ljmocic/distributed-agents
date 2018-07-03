@@ -1,8 +1,10 @@
-package test;
+package utils;
 
 import java.io.InputStream;
-import java.net.InetAddress;
+import java.lang.management.ManagementFactory;
 import java.util.Properties;
+
+import javax.management.ObjectName;
 
 public class AgentCenterConfig {
 
@@ -11,7 +13,7 @@ public class AgentCenterConfig {
 	public static String nodeAddress;
 	public static String nodePort;
 	
-	private static String configFile = "test/master.properties";
+	private static String configFile = "utils/master.properties";
 	
 	static {
 		Properties prop = new Properties();
@@ -21,19 +23,19 @@ public class AgentCenterConfig {
 			prop.load(stream);
 			masterAddress = prop.getProperty("master-address");
 			nodeName = prop.getProperty("node-name");
-			nodeAddress = prop.getProperty("node-address");
-			nodePort = prop.getProperty("node-port");
 			
 		}catch(Exception e) {
 			masterAddress = null;
 			nodeName = "master";
-			try {
-				nodeAddress = InetAddress.getLocalHost().getHostAddress();
-			}catch(Exception ee) {
-				nodeAddress = "127.0.0.1";
-			}
-			nodePort = "8080";
+			
 		}
 		
+		try {
+			nodePort = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=standard-sockets,socket-binding=http"), "port").toString(); 
+	
+			nodeAddress = (String)ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

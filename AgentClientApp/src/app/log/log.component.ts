@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LogService } from '../services/log.service';
 
 @Component({
   selector: 'app-log',
@@ -7,7 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LogComponent implements OnInit {
 
-  constructor() { }
+  content: string;
+
+  constructor(
+    logService: LogService
+  ) {
+    this.content = "";
+   }
 
   ngOnInit() {
   }

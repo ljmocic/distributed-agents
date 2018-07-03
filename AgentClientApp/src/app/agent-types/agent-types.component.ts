@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AgentsService } from '../services/agents.service';
 
 @Component({
   selector: 'app-agent-types',
@@ -7,17 +8,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AgentTypesComponent implements OnInit {
 
-  nums: number[]
-  limit = 25; 
+  types: any[]
 
-  constructor() { 
-    this.nums = [];
-    for(let i=0; i<this.limit; i++){
-      this.nums.push(i+1);
-    }
+  constructor(
+    private agentsService: AgentsService
+  ) { 
+    this.types = [];
   }
 
   ngOnInit() {
+    this.agentsService.getTypes().subscribe(
+      (data) => {
+        this.types = data;
+      }
+    )
   }
 
 }

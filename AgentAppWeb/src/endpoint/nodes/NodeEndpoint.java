@@ -1,6 +1,8 @@
 package endpoint.nodes;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -21,8 +23,10 @@ import agents.types.AgentTypeManagerLocal;
 import connections.ConnectionManagerLocal;
 import connections.NodeSynchronizerLocal;
 import model.AgentCenter;
+import model.AgentDTO;
 import model.AgentRemote;
-import test.AgentCenterConfig;
+import utils.AgentCenterConfig;
+import utils.AgentsMessage;
 import utils.HandshakeMessage;
 import utils.ResteasyClientFactory;
 
@@ -85,9 +89,12 @@ public class NodeEndpoint implements NodeEndpointLocal{
 	@Path("/{alias}")
 	public void deactivateNode(@PathParam("alias") String alias) {
 		System.out.println("Node remove request received :"+alias);
+		AgentCenter center = connectionManager.getAgentCenter(alias);
 		
 		if(connectionManager.removeNode(alias)) {
 			agentTypeManager.removeTypesFromNode(alias);
+			agentManager.syncAgents(center, new ArrayList<>());
+			
 			System.out.println("Master, I have failed you ... "+alias);
 			
 			if(AgentCenterConfig.masterAddress == null) {
@@ -100,6 +107,14 @@ public class NodeEndpoint implements NodeEndpointLocal{
 						if(r != null) {
 							r.close();
 						}
+						
+						AgentsMessage msg = new AgentsMessage();
+						msg.setAgentCenter(center);
+						msg.setAgents(new ArrayList<>());
+						Entity<AgentsMessage> request = Entity.entity(msg, MediaType.APPLICATION_JSON);
+						
+						 r = ResteasyClientFactory.target(ac.getAddress()+"/AgentAppWeb/rest/agents/running")
+								.request().post(request);
 					}
 				}
 			}
@@ -132,12 +147,6 @@ public class NodeEndpoint implements NodeEndpointLocal{
 			}
 		}
 		
-		try {
-			Thread.sleep(30000);
-		}catch(InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		HandshakeMessage messageForNewNode = new HandshakeMessage();
 		for(AgentCenter ac: connectionManager.getAgentCenters()) {
 			messageForNewNode.getAgentCenters().put(ac.getAlias(), ac);
@@ -161,8 +170,27 @@ public class NodeEndpoint implements NodeEndpointLocal{
 		
 		System.out.println("These agents are running, remember that");
 		try {
-			Entity<Collection<AgentRemote>> runningAgents = Entity.entity(agentManager.getRunningAgents(), MediaType.APPLICATION_JSON);
-			Response r = ResteasyClientFactory.target(newAgentCenter.getAddress()+"/AgentAppWeb/rest/agents/running").request().post(runningAgents);
+			Collection<AgentRemote> runningAgents = agentManager.getRunningAgents();
+			List<AgentDTO> runningAgentDTOs = new ArrayList<>();
+			
+			for(AgentRemote agent: runningAgents) {
+				AgentDTO dto = agent.serialize(agent);
+				System.out.println(dto);
+				runningAgentDTOs.add(dto);
+			}
+			
+			AgentsMessage msg = new AgentsMessage();
+			msg.setAgents(runningAgentDTOs);
+			AgentCenter ac = new AgentCenter();
+			ac.setAlias(AgentCenterConfig.nodeName);
+			ac.setAddress("http://"+AgentCenterConfig.nodeAddress+":"+AgentCenterConfig.nodePort);
+			msg.setAgentCenter(ac);
+			
+			Entity<AgentsMessage> request = Entity.entity(msg, MediaType.APPLICATION_JSON);
+			
+			System.out.println(newAgentCenter.getAddress()+"/AgentAppWeb/rest/agents/running");
+			Response r = ResteasyClientFactory.target(newAgentCenter.getAddress()+"/AgentAppWeb/rest/agents/running")
+					.request(MediaType.APPLICATION_JSON).post(request);
 			if(r != null) {
 				r.close();
 			}
