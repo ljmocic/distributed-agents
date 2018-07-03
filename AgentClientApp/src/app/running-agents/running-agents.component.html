@@ -7,8 +7,8 @@
       <div class="list-group-flush">
         <div *ngFor="let agent of runningAgents" class="list-group-item">
           <div class="d-flex justify-content-between">
-             {{agent}}
-            <button class="btn btn-danger btn-sm">&nbsp;<i class="fa fa-stop fa-sm"></i>&nbsp;</button>
+             {{agent.name}} [{{agent.type.name}}] @ {{agent.host.alias}}
+            <button class="btn btn-danger btn-sm" (click)="stopAgent(agent)">&nbsp;<i class="fa fa-stop fa-sm"></i>&nbsp;</button>
           </div>
         </div>
       </div>
