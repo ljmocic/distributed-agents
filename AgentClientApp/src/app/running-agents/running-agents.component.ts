@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AgentsService } from '../services/agents.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { AgentsService } from '../services/agents.service';
 })
 export class RunningAgentsComponent implements OnInit {
 
-  runningAgents: any[]
+  @Input() runningAgents: any[];
 
   constructor(
     private agentsService: AgentsService
@@ -16,11 +16,7 @@ export class RunningAgentsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.agentsService.getRunningAgents().subscribe(
-      (data) => {
-        this.runningAgents = data;
-      }
-    )
+    
   }
 
   stopAgent(agent: any){
@@ -29,6 +25,7 @@ export class RunningAgentsComponent implements OnInit {
     this.agentsService.stopAgent(aid).subscribe(
       (data) => {
         alert("success");
+        this.runningAgents.splice(this.runningAgents.indexOf(agent), 1);
       }
     )
   }

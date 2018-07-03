@@ -28,7 +28,7 @@ public class JNDIUtils {
 		try {
 			context = new InitialContext(jndiProperties);
 		}catch(Exception e) {
-			//
+			e.printStackTrace();
 		}
 	}
 
@@ -74,5 +74,9 @@ public class JNDIUtils {
 			return new AgentType(name, module);
 		}
 		return null;
+	}
+	
+	public static AgentRemote agentLookup(String module, String name) throws NamingException{
+		return (AgentRemote)context.lookup("java:app/"+module+"/"+name);
 	}
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AgentsService } from '../services/agents.service';
 
 @Component({
@@ -8,26 +8,15 @@ import { AgentsService } from '../services/agents.service';
 })
 export class AgentTypesComponent implements OnInit {
 
-  types: any[]
+  @Input() types: any[];
 
   constructor(
     private agentsService: AgentsService
-  ) { 
-    this.types = [];
+  ) {
   }
 
   ngOnInit() {
-    this.agentsService.getTypes().subscribe(
-      (data) => {
-        this.types = data;
-        for(let i=0; i<this.types.length; i++){
-          this.types[i].agentForm = {
-            opened: false,
-            name: ''
-          };
-        }
-      }
-    )
+   
   }
 
   openForm(type: any){

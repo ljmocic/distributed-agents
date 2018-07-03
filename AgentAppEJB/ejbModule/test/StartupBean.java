@@ -13,6 +13,8 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import messaging.MDBConsumer;
+
 /**
  * Session Bean implementation class StartupBean
  */
@@ -42,7 +44,7 @@ public class StartupBean implements StartupBeanLocal {
 		c.start();
 		
 		MessageConsumer consumer = s.createConsumer(q);
-		consumer.setMessageListener(new MDBConsumerTest());
+		consumer.setMessageListener(new MDBConsumer());
 		TextMessage msg = s.createTextMessage("Queue message!");
 		long sent = System.currentTimeMillis();
 		msg.setLongProperty("sent", sent);

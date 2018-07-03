@@ -3,6 +3,8 @@ package model;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ACLMessage implements Serializable{
 
 	/**
@@ -15,7 +17,9 @@ public class ACLMessage implements Serializable{
 	private AID[] receivers;
 	private AID replyTo;
 	private String content;
+	@JsonIgnore
 	private Object contentObj;
+	@JsonIgnore
 	private HashMap<String, Object> userArgs;
 	private String language;
 	private String encoding;
@@ -169,5 +173,37 @@ public class ACLMessage implements Serializable{
 		this.replyBy = replyBy;
 	}
 	
+	@Override
+	public String toString() {
+		String retVal = "=====\tACLMessage\t=====";
+		retVal += "\n\n\tPerformative: "+performative;
+		
+		retVal += "\n\tSender: "+sender;
+		retVal += "\n\tReceivers: ";
+		for(AID receiver: receivers) {
+			retVal += "\n\t\t"+receiver;
+		}
+		retVal += "\n\tReplyTo: "+replyTo;
+		
+		retVal += "\n\n-----\tContent\t-----\n";
+		retVal += content;
+		retVal += "\nObject: "+contentObj;
+		retVal += "\nUserArgs: "+userArgs;
+		retVal += "\n-----------------------------\n";
+		
+		retVal += "\n\tLanguage: "+language;
+		retVal += "\n\tEncoding: "+encoding;
+		retVal += "\n\tOntology: "+ontology;
+		retVal += "\n\tProtocol: "+protocol;
+		
+		retVal += "\n\n\tConversationId: "+conversationId;
+		retVal += "\n\tReplyWith: "+replyWith;
+		retVal += "\n\tInReplyTo: "+inReplyTo;
+		retVal += "\n\tReplyBy: "+replyBy;
+		
+		retVal += "\n\n=============================\n";
+	
+		return retVal;
+	}
 	
 }

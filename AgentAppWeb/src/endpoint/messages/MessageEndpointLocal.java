@@ -10,5 +10,5 @@ import model.ACLMessage;
 public interface MessageEndpointLocal {
 
 	public Collection<String> getPerformatives();
-	public Object sendACLMessage(ACLMessage message);
+	public void sendACLMessage(ACLMessage message);
 }

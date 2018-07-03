@@ -60,7 +60,7 @@ public class AgentManager implements AgentManagerLocal {
 		AgentRemote agent = null;
 		try {
 			System.out.println("ejb:/" + type.getModule() +"//"+type.getName());
-			agent = (AgentRemote)JNDIUtils.getContext().lookup("java:app/"+type.getModule()+"/"+type.getName());
+			agent = JNDIUtils.agentLookup(type.getModule(),type.getName());
 		}catch(Exception e) {
 			e.printStackTrace();
 			System.out.println("Agent not found");
@@ -82,6 +82,7 @@ public class AgentManager implements AgentManagerLocal {
 		for(AID aidd: runningAgents.keySet()) {
 			if(aidd.equals(aid)) {
 				runningAgents.remove(aidd);
+				return;
 			}
 		}
 	}
@@ -101,9 +102,10 @@ public class AgentManager implements AgentManagerLocal {
 		
 		System.out.println("Syncing");
 		
-		for(AID aid: runningAgents.keySet()) {
-			if(aid.getHost().equals(center)) {
-				runningAgents.remove(aid);
+		AID[] aids = (AID[])runningAgents.keySet().toArray();
+		for(int i = aids.length-1; i>=0; i--) {
+			if(aids[i].getHost().equals(center)) {
+				runningAgents.remove(aids[i]);
 			}
 		}
 		

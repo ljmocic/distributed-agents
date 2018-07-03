@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Date;
+
 import javax.ejb.Remote;
 import javax.ejb.Stateful;
 
@@ -14,11 +16,11 @@ public class AgentImpl extends Agent{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer implField;
-
+	
 	@Override
 	public void handleMessage(ACLMessage message) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("[AgentImpl received message at "+new Date()+"]");
+		System.out.println(message);
 	}
 
 	@Override

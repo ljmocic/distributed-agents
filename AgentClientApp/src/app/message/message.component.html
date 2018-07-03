@@ -8,52 +8,66 @@
       <br />
       <div class="form-group">
         <label class="form-label" for="performative" required>Performative</label>
-        <select class="form-control" id="performative">
-          <option value="Value1">Value1</option>
+        <select class="form-control" id="performative" [(ngModel)]="message.performative" name="performative">
+          <option *ngFor="let performative of performatives" value="{{performative}}">{{performative}}</option>
         </select>
       </div>
       <div class="form-group">
         <label class="form-label" for="sender" required>Sender</label>
-        <input type="text" class="form-control" id="sender" />
+        <select class="form-control" id="sender" [(ngModel)]="message.sender" name="sender">
+          <option *ngFor="let sender of runningAgents" [ngValue]="sender">{{sender.name}} [{{sender.type.name}}] @ {{sender.host.alias}}</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label" for="receivers" required>Receivers</label>
-        <textarea class="form-control" id="receivers"></textarea>
+        <select multiple class="form-control" id="receivers" [(ngModel)]="message.receivers" name="receivers">
+          <option *ngFor="let receiver of runningAgents" [ngValue]="receiver">{{receiver.name}} [{{receiver.type.name}}] @ {{receiver.host.alias}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="replyTo" required>Reply To</label>
+        <select class="form-control" id="replyTo" [(ngModel)]="message.replyTo" name="replyTo">
+          <option *ngFor="let receiver of runningAgents" [ngValue]="receiver">{{receiver.name}} [{{receiver.type.name}}] @ {{receiver.host.alias}}</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label" for="content" required>Content</label>
-        <textarea class="form-control form-control-lg" id="content"></textarea>
+        <textarea class="form-control form-control-lg" id="content" [(ngModel)]="message.content" name="content">{{message.content}}</textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="language">Language</label>
-        <input type="text" class="form-control" id="language" />
+        <input type="text" class="form-control" id="language" [(ngModel)]="message.language" name="language"/>
       </div>
       <div class="form-group">
         <label class="form-label" for="encoding">Encoding</label>
-        <input type="text" class="form-control" id="encoding" />
+        <input type="text" class="form-control" id="encoding" [(ngModel)]="message.encoding" name="encoding"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="protocol">Protocol</label>
+        <input type="text" class="form-control" id="protocol" [(ngModel)]="message.protocol" name="protocol"/>
       </div>
       <div class="form-group">
         <label class="form-label" for="ontology">Ontology</label>
-        <input type="text" class="form-control" id="ontology" />
+        <input type="text" class="form-control" id="ontology" [(ngModel)]="message.ontology" name="ontology"/>
       </div>
       <div class="form-group">
         <label class="form-label" for="convId">Conversation ID</label>
-        <input type="text" class="form-control" id="convId" />
+        <input type="text" class="form-control" id="convId" [(ngModel)]="message.conversationId" name="convId"/>
       </div>
       <div class="form-group">
         <label class="form-label" for="replyWith">Reply with</label>
-        <input type="text" class="form-control" id="replyWith" />
+        <input type="text" class="form-control" id="replyWith" [(ngModel)]="message.replyWith" name="replyWith"/>
       </div>
       <div class="form-group">
         <label class="form-label" for="inReplyTo">In reply to</label>
-        <input type="text" class="form-control" id="inReplyTo" />
+        <input type="text" class="form-control" id="inReplyTo" [(ngModel)]="message.inReplyTo" name="inReplyTo"/>
       </div>
       <div class="form-group">
         <label class="form-label" for="replyBy">Reply by</label>
-        <input type="text" class="form-control" id="replyBy" />
+        <input type="number" class="form-control" id="replyBy" [(ngModel)]="message.replyBy" name="replyBy"/>
       </div>
       <div class="form-group mb-0">
-        <button class="btn btn-info w-100 btn-lg d-flex justify-content-between"><i class="mt-1 fa fa-send fa-lg"></i><b>Send</b></button>
+        <button class="btn btn-info w-100 btn-lg d-flex justify-content-between" (click)="send()"><i class="mt-1 fa fa-send fa-lg"></i><b>Send</b></button>
       </div>
     </form>
   </div>
