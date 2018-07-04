@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AgentsService } from './services/agents.service';
+import { WebSocketService } from './services/web-socket.service';
 
 @Component({
   selector: 'app-root',
@@ -9,31 +10,9 @@ import { AgentsService } from './services/agents.service';
 export class AppComponent {
   title = 'app';
 
-
-  public types: any[];
-  public runningAgents: any[];
-
   constructor(
-    private agentsService: AgentsService
+    private websocketService: WebSocketService
   ){
-    this.types = [];
-    this.runningAgents = [];
-    this.agentsService.getTypes().subscribe(
-      (data) => {
-        this.types = data;
-        for(let i=0; i<this.types.length; i++){
-          this.types[i].agentForm = {
-            opened: false,
-            name: ''
-          };
-        }
-      }
-    )
-
-    this.agentsService.getRunningAgents().subscribe(
-      (data) => {
-        this.runningAgents = data;
-      }
-    )
+    
   }
 }

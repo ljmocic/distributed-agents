@@ -1,7 +1,6 @@
 package endpoint.agents;
 
 import java.util.Collection;
-import java.util.HashMap;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -24,6 +23,7 @@ public class AgentTypeManagementEndpoint implements AgentTypeManagementEndpointL
 	AgentTypeManagerLocal agentManager;
 	
 	@GET
+	@Path("/system")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public Collection<AgentType> getAgentTypes(){
@@ -37,10 +37,9 @@ public class AgentTypeManagementEndpoint implements AgentTypeManagementEndpointL
 	}
 
 	@GET
-	@Path("/system")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public HashMap<String, Collection<AgentType>> getAllAgentTypes() {
+	public Collection<AgentType> getAllAgentTypes() {
 		return agentManager.getAgentTypesOnSystem();
 	}
 	

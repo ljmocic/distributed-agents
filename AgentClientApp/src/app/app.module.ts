@@ -11,6 +11,7 @@ import { AgentsService } from './services/agents.service';
 import { LogService } from './services/log.service';
 import { MessageService } from './services/message.service';
 import { HttpClientModule } from '@angular/common/http';
+import { WebSocketService } from './services/web-socket.service';
 
 
 @NgModule({
@@ -26,7 +27,7 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     HttpClientModule
   ],
-  providers: [AgentsService, LogService, MessageService],
+  providers: [AgentsService, LogService, MessageService, WebSocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

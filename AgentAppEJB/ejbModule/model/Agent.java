@@ -2,6 +2,8 @@ package model;
 
 import java.io.Serializable;
 
+import messaging.MessageManager;
+
 /**
  * Session Bean implementation class Agent
  */
@@ -11,10 +13,14 @@ public abstract class Agent implements AgentRemote, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public String MODULE_NAME = "AgentAppEJB";
 	/**
      * Default constructor. 
      */
 	private AID id;
+	
+	public Agent(){
+	}
 	
     @Override
 	public AID getAID() {
@@ -39,4 +45,9 @@ public abstract class Agent implements AgentRemote, Serializable {
     	return false;
     }
 
+    @Override
+	public MessageManager getMessageManager() {
+		return new MessageManager();
+	}
+    
 }

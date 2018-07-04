@@ -15,7 +15,7 @@ public interface AgentTypeManagerLocal {
 	
 	public void setAgentTypesOnSystem(HashMap<String, Collection<AgentType>> types);
 	
-	public HashMap<String, Collection<AgentType>> getAgentTypesOnSystem();
+	public Collection<AgentType> getAgentTypesOnSystem();
 	
 	public boolean addTypesFromNode(String center, Collection<AgentType> types);
 	
@@ -24,4 +24,6 @@ public interface AgentTypeManagerLocal {
 	public Collection<AgentType> getTypesFromCenter(String center);
 
 	public AgentType getTypeWithName(String name);
+	
+	public HashMap<String, Collection<AgentType>> getTypesAsMap();
 }

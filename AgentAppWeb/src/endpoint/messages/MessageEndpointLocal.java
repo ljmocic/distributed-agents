@@ -11,4 +11,5 @@ public interface MessageEndpointLocal {
 
 	public Collection<String> getPerformatives();
 	public void sendACLMessage(ACLMessage message);
+	public void receiveACLMessage(ACLMessage message);
 }

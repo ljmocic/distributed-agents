@@ -38,7 +38,6 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
 	public void setupNode() {
     	HandshakeMessage message = new HandshakeMessage();
     	
-    	System.out.println("Node up: "+AgentCenterConfig.nodeName);
     	AgentCenter ac = new AgentCenter();
 		ac.setAlias(AgentCenterConfig.nodeName);
 		ac.setAddress("http://"+AgentCenterConfig.nodeAddress+":"+AgentCenterConfig.nodePort);
@@ -50,8 +49,6 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
 			return;
 		}
 		
-		System.out.println(message);
-		
 		if(AgentCenterConfig.masterAddress != null) {
 			Entity<HandshakeMessage> request = Entity.entity(message, MediaType.APPLICATION_JSON);
 	        Response r = ResteasyClientFactory.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node")
@@ -60,7 +57,6 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
 	        	r.close();
 	        }
 		}else {
-			System.out.println("The master has risen");
 			connectionManager.addNode(ac);
 			agentTypeManager.addTypesFromNode(ac.getAlias(), message.getAgentTypes().get(ac.getAlias()));
 		}
@@ -69,7 +65,6 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
     @Override
     @PreDestroy
     public void removeNode() {
-    	System.out.println("Node down: "+AgentCenterConfig.nodeName);
 		if(AgentCenterConfig.masterAddress != null) {
 	    	Response r = ResteasyClientFactory.target("http://"+AgentCenterConfig.masterAddress+"/AgentAppWeb/rest/node/"+AgentCenterConfig.nodeName)
 	    		.request().delete();
@@ -77,7 +72,6 @@ public class NodeSynchronizer implements NodeSynchronizerLocal {
 	    		r.close();
 	    	}
 		}else {
-			System.out.println("The master has fallen");
 			connectionManager.removeNode(AgentCenterConfig.nodeName);
 			agentTypeManager.removeTypesFromNode(AgentCenterConfig.nodeName);
 		}

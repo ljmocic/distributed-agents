@@ -52,24 +52,24 @@ public class AgentManager implements AgentManagerLocal {
 		AID aid = new AID(name, host, type);
 		for(AID dd: runningAgents.keySet()) {
 			if(dd.equals(aid)) {
+				System.out.println("Agent already running: "+aid);
 				return null;
 			}
 		}
 		
-		System.out.println(aid);
 		AgentRemote agent = null;
 		try {
-			System.out.println("ejb:/" + type.getModule() +"//"+type.getName());
 			agent = JNDIUtils.agentLookup(type.getModule(),type.getName());
 		}catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("Agent not found");
+			System.out.println("Agent type not found: "+type.getName());
 			return null;
 		}
 		
 		if(agent != null) {
 			agent.setAID(aid);
 			runningAgents.put(aid, agent);
+			System.out.println("Agent "+aid+" started");
 			return agent;
 		}
 		
@@ -77,14 +77,16 @@ public class AgentManager implements AgentManagerLocal {
 	}
 
 	@Override
-	public void removeAgent(AID aid) {
-		System.out.println(aid);
+	public boolean removeAgent(AID aid) {
 		for(AID aidd: runningAgents.keySet()) {
 			if(aidd.equals(aid)) {
+				System.out.println("Agent "+aidd+" stopped");
 				runningAgents.remove(aidd);
-				return;
+				return true;
 			}
 		}
+		
+		return false;
 	}
 
 	@Override
@@ -99,19 +101,29 @@ public class AgentManager implements AgentManagerLocal {
 
 	@Override
 	public void syncAgents(AgentCenter center, Collection<AgentRemote> agents) {
-		
-		System.out.println("Syncing");
-		
-		AID[] aids = (AID[])runningAgents.keySet().toArray();
+		Object[] aids = runningAgents.keySet().toArray();
 		for(int i = aids.length-1; i>=0; i--) {
-			if(aids[i].getHost().equals(center)) {
+			if(((AID)aids[i]).getHost().equals(center)) {
 				runningAgents.remove(aids[i]);
 			}
 		}
 		
+		System.out.println("Synced agents from "+center.getAlias());
 		for(AgentRemote agent: agents) {
-			System.out.println("Synced " + agent.getAID());
+			System.out.println("\t"+agent.getAID());
 			runningAgents.put(agent.getAID(), agent);
 		}
+		
+	}
+	
+	@Override
+	public AgentRemote getRunningAgent(AID aid) {
+		for(AID agent: runningAgents.keySet()) {
+			if(agent.equals(aid)) {
+				return runningAgents.get(agent);
+			}
+		}
+		
+		return null;
 	}
 }

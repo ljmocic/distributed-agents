@@ -12,8 +12,9 @@ import model.AgentRemote;
 public interface AgentManagerLocal {
 
 	public AgentRemote startAgent(String agentClass, String name);
-	public void removeAgent(AID aid);
+	public boolean removeAgent(AID aid);
 	public Collection<AID> getRunningAIDs();
 	public Collection<AgentRemote> getRunningAgents();
 	public void syncAgents(AgentCenter center, Collection<AgentRemote> agents);
+	public AgentRemote getRunningAgent(AID aid);
 }

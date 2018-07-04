@@ -1,7 +1,5 @@
 package agents.impls;
 
-import java.util.Date;
-
 import javax.ejb.Remote;
 import javax.ejb.Stateful;
 
@@ -22,10 +20,10 @@ public class AgentImpl2 extends Agent{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String impl2Field;
-
+	
 	@Override
 	public void handleMessage(ACLMessage message) {
-		System.out.println("[AgentImpl2 received message at "+new Date()+"]");
+		System.out.println("Message ("+getAID()+")");
 		System.out.println(message);
 	}
 

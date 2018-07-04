@@ -18,31 +18,31 @@ import utils.AgentCenterConfig;
 public class ConnectionManager implements ConnectionManagerLocal {
 
 	private HashMap<String, AgentCenter> agentCenters;
+
 	
     @PostConstruct
     @Override
     public void initMap() {
-    	System.out.println("init map");
         agentCenters = new HashMap<String, AgentCenter>();
     }
 
     @Override
     public boolean addNode(AgentCenter center) {
-    	System.out.println("add node");
     	if(agentCenters.containsKey(center.getAlias())) {
     		return false;
     	}
     	
     	agentCenters.put(center.getAlias(), center);
+    	System.out.println("Node "+center.getAlias()+" registered");
     	return true;
     }
     
     @Override
     public boolean removeNode(String alias) {
-    	System.out.println("remove node");
     	if(!alias.equals(AgentCenterConfig.nodeName)) {
 	    	if(agentCenters.containsKey(alias)) {
 	    		agentCenters.remove(alias);
+	    		System.out.println("Node "+alias+" removed");
 	    		return true;
 	    	}
 

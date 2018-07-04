@@ -1,5 +1,6 @@
 package agents.types;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -26,7 +27,7 @@ public class AgentTypeManager implements AgentTypeManagerLocal {
 	private JNDIUtils jndiUtils;
 	private HashMap<String, Collection<AgentType>> typesOnSystem;
 	
-    public AgentTypeManager() {
+	public AgentTypeManager() {
         // TODO Auto-generated constructor stub
     }
     
@@ -52,7 +53,6 @@ public class AgentTypeManager implements AgentTypeManagerLocal {
 
 	@Override
 	public void setAgentTypesOnSystem(HashMap<String, Collection<AgentType>> types) {
-		System.out.println("setAgentTypesOnSystem");
 		for(String ac: types.keySet()) {
 			typesOnSystem.put(ac, types.get(ac));
 		}
@@ -60,22 +60,43 @@ public class AgentTypeManager implements AgentTypeManagerLocal {
 
 	@Override
 	public boolean addTypesFromNode(String center, Collection<AgentType> types) {
-		System.out.println("addTypesFromNode");
 		if(typesOnSystem.containsKey(center))
 			return false;
 		
 		typesOnSystem.put(center, types);
+		System.out.println("Synced agents type with "+center);
+		for(AgentType type: types) {
+			System.out.println("\t"+type);
+		}
+		
 		return true;
 	}
 
 	@Override
-	public HashMap<String, Collection<AgentType>> getAgentTypesOnSystem() {
-		return typesOnSystem;
+	public Collection<AgentType> getAgentTypesOnSystem() {
+		Collection<AgentType> types = new ArrayList<>();
+		
+		for(Collection<AgentType> coll: typesOnSystem.values()) {
+			for(AgentType type: coll) {
+				boolean flag = false;
+				for(AgentType added: types) {
+					if(type.equals(added)) {
+						flag = true;
+						break;
+					}
+				}
+				
+				if(!flag) {
+					types.add(type);
+				}
+			}
+		}
+		
+		return types;
 	}
 
 	@Override
 	public void removeTypesFromNode(String center) {
-		System.out.println("removeTypesFromNode");
 		if(!center.equals(AgentCenterConfig.nodeName)) {
 			if(typesOnSystem.containsKey(center))
 				typesOnSystem.remove(center);
@@ -100,5 +121,10 @@ public class AgentTypeManager implements AgentTypeManagerLocal {
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public HashMap<String, Collection<AgentType>> getTypesAsMap(){
+		return typesOnSystem;
 	}
 }

@@ -1,14 +1,14 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-3" id="types">
-      <app-agent-types [types]="types"></app-agent-types>
+      <app-agent-types [types]="websocketService.types"></app-agent-types>
     </div>
     <div class="col-5">
-      <app-running-agents [runningAgents]="runningAgents"></app-running-agents>
+      <app-running-agents [runningAgents]="websocketService.runningAgents"></app-running-agents>
       <app-log></app-log>
     </div>
     <div class="col-4">
-      <app-message [runningAgents]="runningAgents"></app-message>
+      <app-message [runningAgents]="websocketService.runningAgents"></app-message>
     </div>
   </div>
 </div>

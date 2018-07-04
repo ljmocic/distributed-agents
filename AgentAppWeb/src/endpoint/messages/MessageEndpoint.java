@@ -2,6 +2,7 @@ package endpoint.messages;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -9,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Entity;
@@ -46,16 +48,35 @@ public class MessageEndpoint implements MessageEndpointLocal{
 	@Override
 	public void sendACLMessage(ACLMessage message) {
 		if(message.getSender().getHost().getAlias().equals(AgentCenterConfig.nodeName)) {
-			System.out.println("Endpoint received message to handle");
-			System.out.println(message);
-			messageManager.sendMessage(message);
+			List<String> hosts = new ArrayList<>();
+			
+			for(int i=0; i<message.getReceivers().length; i++) {
+				if(!hosts.contains(message.getReceivers()[i].getHost().getAlias())) {
+					hosts.add(message.getReceivers()[i].getHost().getAlias());
+					
+					if(message.getReceivers()[i].getHost().getAlias().equals(AgentCenterConfig.nodeName)) {
+						receiveACLMessage(message);
+					}else {
+						Entity<ACLMessage> msg = Entity.entity(message, MediaType.APPLICATION_JSON);
+						ResteasyClientFactory.target(message.getReceivers()[i].getHost().getAddress()+"/AgentAppWeb/rest/messages")
+							.request().put(msg);
+					}
+				}
+			}
 		}else {
 			forwardMessage(message);
 		}
 	}
 	
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Override
+	public void receiveACLMessage(ACLMessage message) {
+		messageManager.sendMessage(message);
+	}
+	
+	
 	private void forwardMessage(ACLMessage message) {
-		System.out.println("Message forward");
 		Entity<ACLMessage> msg = Entity.entity(message, MediaType.APPLICATION_JSON);
 		ResteasyClientFactory.target(message.getSender().getHost().getAddress()+"/AgentAppWeb/rest/messages")
 			.request().post(msg);

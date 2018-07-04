@@ -1,5 +1,6 @@
 package model;
 
+import messaging.MessageManager;
 
 public interface AgentRemote {
 
@@ -12,4 +13,6 @@ public interface AgentRemote {
     public AgentDTO serialize(AgentRemote agent);
     
     public AgentRemote deserialize(AgentDTO agentDTO);
+    
+    public MessageManager getMessageManager();
 }

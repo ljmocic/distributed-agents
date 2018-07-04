@@ -17,7 +17,7 @@ public class JNDIUtils {
 	private Hashtable<String, Object> jndiProperties;
 	private static Context context;
 	
-	private static final String INTERFACE = "!" + AgentRemote.class.getName();
+	public static final String INTERFACE = "!" + AgentRemote.class.getName();
 	private static final String EXPORTED = "java:jboss/exported/AgentApp";
 
 	public JNDIUtils() {}

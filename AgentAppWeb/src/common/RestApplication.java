@@ -1,3 +1,4 @@
+package common;
 
 
 import javax.ws.rs.ApplicationPath;

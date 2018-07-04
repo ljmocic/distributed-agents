@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 import agents.AgentManagerLocal;
 import agents.types.AgentTypeManagerLocal;
 import connections.ConnectionManagerLocal;
+import endpoint.web_socket.WebSocketAgentsEndpoint;
 import model.AID;
 import model.AgentCenter;
 import model.AgentDTO;
@@ -45,6 +46,9 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 	@EJB
 	ConnectionManagerLocal connectionManager;
 	
+	@EJB
+	WebSocketAgentsEndpoint webSocketEndpoint;
+	
 	@PUT
 	@Path("/{type}/{name}")
 	@Override
@@ -55,9 +59,10 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 			List<AgentDTO> runningAgentDTOs = new ArrayList<>();
 			
 			for(AgentRemote agent: runningAgents) {
-				AgentDTO dto = agent.serialize(agent);
-				System.out.println(dto);
-				runningAgentDTOs.add(dto);
+				if(agent.getAID().getHost().getAlias().equals(AgentCenterConfig.nodeName)) {
+					AgentDTO dto = agent.serialize(agent);
+					runningAgentDTOs.add(dto);
+				}
 			}
 			
 			AgentsMessage msg = new AgentsMessage();
@@ -69,7 +74,6 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 			Entity<AgentsMessage> request = Entity.entity(msg, MediaType.APPLICATION_JSON);
 			
 			for(AgentCenter center: connectionManager.getAgentCenters()) {
-				System.out.println(center.getAddress()+"/AgentAppWeb/rest/agents/running");
 				if(!center.getAlias().equals(AgentCenterConfig.nodeName)) {
 					Response r = ResteasyClientFactory.target(center.getAddress()+"/AgentAppWeb/rest/agents/running")
 						.request(MediaType.APPLICATION_JSON).post(request);
@@ -78,7 +82,10 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 					}
 				}
 			}
+
+			webSocketEndpoint.syncRunningAgents(agentManager.getRunningAIDs());
 		}
+		
 	}
 
 	@DELETE
@@ -88,13 +95,15 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 		AID aidd = parseToAID(aid);
 		if(aidd.getHost().getAlias().equals(AgentCenterConfig.nodeName)) {
 		
-			agentManager.removeAgent(parseToAID(aid));
+			if(!agentManager.removeAgent(parseToAID(aid))) {
+				return;
+			}
+			
 			Collection<AgentRemote> runningAgents = agentManager.getRunningAgents();
 			List<AgentDTO> runningAgentDTOs = new ArrayList<>();
 			
 			for(AgentRemote agent: runningAgents) {
 				AgentDTO dto = agent.serialize(agent);
-				System.out.println(dto);
 				runningAgentDTOs.add(dto);
 			}
 			
@@ -115,6 +124,8 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 					}
 				}
 			}
+			
+			webSocketEndpoint.syncRunningAgents(agentManager.getRunningAIDs());
 		}else {
 			Response r = ResteasyClientFactory.target(aidd.getHost().getAddress()+"/AgentAppWeb/rest/agents/running/"+aid)
 					.request().delete();
@@ -135,17 +146,16 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void newAgentStarted(AgentsMessage agents) {
-		System.out.println("Agents sync\n");
 		Collection<AgentDTO> agentDTOs = agents.getAgents();
 		List<AgentRemote> agentss = new ArrayList<>();
 		
 		AgentMapper mapper = new AgentMapper();
 		for(AgentDTO dto: agentDTOs) {
-			System.out.println(dto);
 			agentss.add(mapper.deserialize(dto));
 		}
 		
 		agentManager.syncAgents(agents.getAgentCenter(), agentss);
+		webSocketEndpoint.syncRunningAgents(agentManager.getRunningAIDs());
 	}
 		
 	public AID parseToAID(String aidStr) {
@@ -163,7 +173,6 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 		aid.setType(agentTypeManager.getTypeWithName(typeVal[1]));
 		
 		String[] hostVal = keySet[2].split("=");
-		System.out.println(hostVal[1].substring(0, hostVal[1].length()));
 		aid.setHost(connectionManager.getAgentCenter(hostVal[1].substring(0, hostVal[1].length())));
 		
 		return aid;
@@ -178,7 +187,6 @@ public class AgentManagementEndpoint implements AgentManagementEndpointLocal{
 		
 		for(AgentRemote agent: runningAgents) {
 			AgentDTO dto = agent.serialize(agent);
-			System.out.println(dto);
 			runningAgentDTOs.add(dto);
 		}
 		

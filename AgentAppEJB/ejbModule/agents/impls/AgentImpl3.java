@@ -15,34 +15,44 @@ import model.AgentRemote;
 
 @Stateful
 @Remote(AgentRemote.class)
-public class AgentImpl2 extends Agent{
+public class AgentImpl3 extends Agent {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String impl2Field;
-
+	
+	private Date date;
+	
 	@Override
 	public void handleMessage(ACLMessage message) {
-		System.out.println("[AgentImpl2 received message at "+new Date()+"]");
+		System.out.println("Message ("+getAID()+")");
 		System.out.println(message);
 	}
 
-	public String getImpl2Field() {
-		return impl2Field;
+	public AgentImpl3(Date date) {
+		super();
+		this.date = date;
 	}
 
-	public void setImpl2Field(String impl2Field) {
-		this.impl2Field = impl2Field;
+	public AgentImpl3() {
+		
+	}
+	
+	public Date getDate() {
+		return date;
 	}
 
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
 	@Override
 	public AgentDTO serialize(AgentRemote agent) {
 		AgentDTO dto = new AgentDTO();
 		//dto.setAgentClass(AgentImpl.class);
 		dto.getFieldMap().put("id", getAID());
-		dto.getFieldMap().put("impl2Field", impl2Field);
+		dto.getFieldMap().put("date", getDate());
 		
 		return dto;
 	}
@@ -51,7 +61,7 @@ public class AgentImpl2 extends Agent{
 	public AgentRemote deserialize(AgentDTO agentDTO) {
 		ObjectMapper mapper = new ObjectMapper();
 		this.setAID(mapper.convertValue(agentDTO.getFieldMap().get("id"), AID.class));
-		this.setImpl2Field(mapper.convertValue(agentDTO.getFieldMap().get("impl2Field"), String.class));
+		this.setDate(mapper.convertValue(agentDTO.getFieldMap().get("date"), Date.class));
 		return this;
 	}
 

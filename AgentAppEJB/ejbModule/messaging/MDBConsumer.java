@@ -1,17 +1,18 @@
 package messaging;
 
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
-import javax.naming.NamingException;
 
+import agents.AgentManagerLocal;
 import model.ACLMessage;
 import model.AID;
 import model.AgentRemote;
-import utils.JNDIUtils;
+import utils.AgentCenterConfig;
 
 /**
  * Message-Driven Bean implementation class for: MDBConsumer
@@ -24,6 +25,9 @@ import utils.JNDIUtils;
 		mappedName = "AgentMessages")
 public class MDBConsumer implements MessageListener {
 
+	@EJB
+	AgentManagerLocal agentManager;
+	
     /**
      * Default constructor. 
      */
@@ -38,14 +42,18 @@ public class MDBConsumer implements MessageListener {
         ObjectMessage om = (ObjectMessage) message;
         try {
         	ACLMessage aclMsg = om.getBody(ACLMessage.class);
+        	
         	for(AID aid: aclMsg.getReceivers()) {
-        		AgentRemote agent = JNDIUtils.agentLookup(aid.getType().getModule(),aid.getType().getName());
-        		agent.handleMessage(aclMsg);
+        		if(aid.getHost().getAlias().equals(AgentCenterConfig.nodeName)) {
+	        		AgentRemote agent = agentManager.getRunningAgent(aid);
+	        		if(agent != null) {
+	        			System.out.println("Message for "+aid);
+	        			agent.handleMessage(aclMsg);
+	        		}
+        		}
         	}
         }catch(JMSException je) {
         	je.printStackTrace();
-        }catch(NamingException ne) {
-        	ne.printStackTrace();
         }
     }
 }
